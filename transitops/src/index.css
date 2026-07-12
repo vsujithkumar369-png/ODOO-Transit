@@ -7,7 +7,9 @@
   --text-secondary: #1e3a8a;
   
   --accent-primary: #000080;
-  --accent-hover: #000055;
+  --accent-hover: #333399; /* Lighter navy for hover */
+  --accent-active: #000040; /* Darker navy for active/selection */
+  --accent-light: #e6e6f2; /* Very light blue for sidebar hover */
   
   --border-color: #d0d7e1;
   --success: #22c55e;

@@ -20,8 +20,13 @@
   gap: 0.75rem;
   transition: all 0.2s;
 }
-.nav-item:hover, .nav-item.active {
-  color: var(--text-primary);
-  background-color: var(--bg-tertiary);
+.nav-item:hover {
+  background-color: var(--accent-light);
+  color: var(--accent-primary);
+  border-right: 3px solid var(--accent-hover);
+}
+.nav-item.active {
+  background-color: var(--accent-active);
+  color: #ffffff;
   border-right: 3px solid var(--accent-primary);
 }

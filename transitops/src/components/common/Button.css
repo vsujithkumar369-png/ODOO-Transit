@@ -13,6 +13,9 @@
 .btn-primary:hover {
   background-color: var(--accent-hover);
 }
+.btn-primary:active {
+  background-color: var(--accent-active);
+}
 .btn-secondary {
   background-color: var(--bg-tertiary);
   color: var(--text-primary);
