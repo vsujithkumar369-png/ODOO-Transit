@@ -47,6 +47,6 @@ out/
 *.sln
 *.sw?
 
-# Uploaded assets (ignore content, keep directory via placeholder)
+# Uploaded assets
 /backend/uploads/*
 !/backend/uploads/.gitkeep

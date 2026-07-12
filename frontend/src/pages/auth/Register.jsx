@@ -125,7 +125,7 @@ const Register = () => {
             <a href="/login" style={{color: 'var(--accent-primary)', fontWeight: '600'}}>Sign in here</a>
           </div>
         </form>
-      </Card>
+        </Card>
     </div>
   );
 };
