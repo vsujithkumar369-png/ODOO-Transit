@@ -1,6 +1,19 @@
 const { Pool } = require('pg');
 const env = require('./env');
 
+const password = env.db.password || '';
+const maskedPassword = password.length > 2 
+  ? password[0] + '*'.repeat(password.length - 2) + password[password.length - 1]
+  : password;
+
+console.log('--- Database Config Debug ---');
+console.log('DB_HOST:', env.db.host);
+console.log('DB_PORT:', env.db.port);
+console.log('DB_USER:', env.db.user);
+console.log('DB_PASSWORD:', maskedPassword);
+console.log('DB_NAME:', env.db.database);
+console.log('-----------------------------');
+
 const pool = new Pool({
   host: env.db.host,
   port: env.db.port,

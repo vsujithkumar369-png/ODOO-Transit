@@ -6,8 +6,11 @@ const roleMiddleware = require('../middlewares/role.middleware');
 const router = express.Router();
 
 router.use(authMiddleware);
+router.use(roleMiddleware('Admin', 'Manager'));
 
-router.get('/trips', roleMiddleware('Admin', 'Manager'), reportController.getTripReport);
-router.get('/expenses', roleMiddleware('Admin', 'Manager'), reportController.getExpenseReport);
+router.get('/fuel-efficiency', reportController.getFuelEfficiencyReport);
+router.get('/operational-costs', reportController.getOperationalCostReport);
+router.get('/fleet-utilization', reportController.getFleetUtilizationReport);
+router.get('/vehicle-roi', reportController.getVehicleROIReport);
 
 module.exports = router;

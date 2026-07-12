@@ -1,8 +1,10 @@
+const expenseService = require('../services/expense.service');
 const response = require('../utils/response');
 
 const getAllExpenses = async (req, res, next) => {
   try {
-    return response.success(res, 'Expenses listed successfully', []);
+    const expenses = await expenseService.getExpenses();
+    return response.success(res, 'Expenses listed successfully', expenses);
   } catch (error) {
     next(error);
   }
@@ -10,7 +12,8 @@ const getAllExpenses = async (req, res, next) => {
 
 const getExpenseById = async (req, res, next) => {
   try {
-    return response.success(res, 'Expense details fetched', { id: req.params.id });
+    const expense = await expenseService.getExpenseById(req.params.id);
+    return response.success(res, 'Expense details fetched successfully', expense);
   } catch (error) {
     next(error);
   }
@@ -18,7 +21,8 @@ const getExpenseById = async (req, res, next) => {
 
 const createExpense = async (req, res, next) => {
   try {
-    return response.success(res, 'Expense created successfully', req.body, 201);
+    const expense = await expenseService.createExpense(req.body);
+    return response.success(res, 'Expense created successfully', expense, 201);
   } catch (error) {
     next(error);
   }
@@ -26,7 +30,8 @@ const createExpense = async (req, res, next) => {
 
 const updateExpense = async (req, res, next) => {
   try {
-    return response.success(res, 'Expense updated successfully', { id: req.params.id, ...req.body });
+    const expense = await expenseService.updateExpense(req.params.id, req.body);
+    return response.success(res, 'Expense updated successfully', expense);
   } catch (error) {
     next(error);
   }
@@ -34,7 +39,8 @@ const updateExpense = async (req, res, next) => {
 
 const deleteExpense = async (req, res, next) => {
   try {
-    return response.success(res, 'Expense deleted successfully', { id: req.params.id });
+    const expense = await expenseService.deleteExpense(req.params.id);
+    return response.success(res, 'Expense deleted successfully', expense);
   } catch (error) {
     next(error);
   }

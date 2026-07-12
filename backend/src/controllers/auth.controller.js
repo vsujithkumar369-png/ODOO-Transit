@@ -1,8 +1,10 @@
+const authService = require('../services/auth.service');
 const response = require('../utils/response');
 
 const register = async (req, res, next) => {
   try {
-    return response.success(res, 'Registration status checked successfully', null, 201);
+    const user = await authService.registerUser(req.body);
+    return response.success(res, 'User registered successfully', user, 201);
   } catch (error) {
     next(error);
   }
@@ -10,7 +12,8 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    return response.success(res, 'Login status checked successfully', null);
+    const session = await authService.loginUser(req.body);
+    return response.success(res, 'User logged in successfully', session);
   } catch (error) {
     next(error);
   }
@@ -18,7 +21,8 @@ const login = async (req, res, next) => {
 
 const getMe = async (req, res, next) => {
   try {
-    return response.success(res, 'User profile request processed', req.user || null);
+    const user = await authService.getUserProfile(req.user.id);
+    return response.success(res, 'User profile fetched successfully', user);
   } catch (error) {
     next(error);
   }
@@ -26,7 +30,7 @@ const getMe = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   try {
-    return response.success(res, 'Logout request processed');
+    return response.success(res, 'Logged out successfully');
   } catch (error) {
     next(error);
   }

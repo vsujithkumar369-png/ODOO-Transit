@@ -5,7 +5,7 @@ const auth = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return response.error(res, 'Authorization token missing or malformed', 401);
+    return response.error(res, 'Access token missing or malformed', 401);
   }
 
   const token = authHeader.split(' ')[1];

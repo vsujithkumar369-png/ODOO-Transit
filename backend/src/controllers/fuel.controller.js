@@ -1,8 +1,10 @@
+const fuelService = require('../services/fuel.service');
 const response = require('../utils/response');
 
 const getAllFuelLogs = async (req, res, next) => {
   try {
-    return response.success(res, 'Fuel logs listed successfully', []);
+    const logs = await fuelService.getFuelLogs();
+    return response.success(res, 'Fuel logs listed successfully', logs);
   } catch (error) {
     next(error);
   }
@@ -10,7 +12,8 @@ const getAllFuelLogs = async (req, res, next) => {
 
 const getFuelLogById = async (req, res, next) => {
   try {
-    return response.success(res, 'Fuel log details fetched', { id: req.params.id });
+    const log = await fuelService.getFuelLogById(req.params.id);
+    return response.success(res, 'Fuel log details fetched successfully', log);
   } catch (error) {
     next(error);
   }
@@ -18,7 +21,8 @@ const getFuelLogById = async (req, res, next) => {
 
 const createFuelLog = async (req, res, next) => {
   try {
-    return response.success(res, 'Fuel log created successfully', req.body, 201);
+    const log = await fuelService.createFuelLog(req.body);
+    return response.success(res, 'Fuel log created successfully', log, 201);
   } catch (error) {
     next(error);
   }
@@ -26,7 +30,8 @@ const createFuelLog = async (req, res, next) => {
 
 const updateFuelLog = async (req, res, next) => {
   try {
-    return response.success(res, 'Fuel log updated successfully', { id: req.params.id, ...req.body });
+    const log = await fuelService.updateFuelLog(req.params.id, req.body);
+    return response.success(res, 'Fuel log updated successfully', log);
   } catch (error) {
     next(error);
   }
@@ -34,7 +39,8 @@ const updateFuelLog = async (req, res, next) => {
 
 const deleteFuelLog = async (req, res, next) => {
   try {
-    return response.success(res, 'Fuel log deleted successfully', { id: req.params.id });
+    const log = await fuelService.deleteFuelLog(req.params.id);
+    return response.success(res, 'Fuel log deleted successfully', log);
   } catch (error) {
     next(error);
   }

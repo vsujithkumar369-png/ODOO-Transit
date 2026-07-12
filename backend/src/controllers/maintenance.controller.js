@@ -1,8 +1,10 @@
+const maintenanceService = require('../services/maintenance.service');
 const response = require('../utils/response');
 
 const getAllMaintenanceLogs = async (req, res, next) => {
   try {
-    return response.success(res, 'Maintenance logs listed successfully', []);
+    const logs = await maintenanceService.getMainMaintenanceLogs();
+    return response.success(res, 'Maintenance logs listed successfully', logs);
   } catch (error) {
     next(error);
   }
@@ -10,7 +12,8 @@ const getAllMaintenanceLogs = async (req, res, next) => {
 
 const getMaintenanceLogById = async (req, res, next) => {
   try {
-    return response.success(res, 'Maintenance log details fetched', { id: req.params.id });
+    const log = await maintenanceService.getMaintenanceLogById(req.params.id);
+    return response.success(res, 'Maintenance log details fetched successfully', log);
   } catch (error) {
     next(error);
   }
@@ -18,7 +21,8 @@ const getMaintenanceLogById = async (req, res, next) => {
 
 const createMaintenanceLog = async (req, res, next) => {
   try {
-    return response.success(res, 'Maintenance log created successfully', req.body, 201);
+    const log = await maintenanceService.createMaintenanceLog(req.body);
+    return response.success(res, 'Maintenance log created successfully', log, 201);
   } catch (error) {
     next(error);
   }
@@ -26,7 +30,9 @@ const createMaintenanceLog = async (req, res, next) => {
 
 const updateMaintenanceLog = async (req, res, next) => {
   try {
-    return response.success(res, 'Maintenance log updated successfully', { id: req.params.id, ...req.body });
+    const cost = req.body.cost;
+    const log = await maintenanceService.closeMaintenanceLog(req.params.id, cost);
+    return response.success(res, 'Maintenance log updated/closed successfully', log);
   } catch (error) {
     next(error);
   }
@@ -34,7 +40,8 @@ const updateMaintenanceLog = async (req, res, next) => {
 
 const deleteMaintenanceLog = async (req, res, next) => {
   try {
-    return response.success(res, 'Maintenance log deleted successfully', { id: req.params.id });
+    const log = await maintenanceService.deleteMaintenanceLog(req.params.id);
+    return response.success(res, 'Maintenance log deleted successfully', log);
   } catch (error) {
     next(error);
   }

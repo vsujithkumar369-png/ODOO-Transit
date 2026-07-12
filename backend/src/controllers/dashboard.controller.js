@@ -1,9 +1,9 @@
+const dashboardService = require('../services/dashboard.service');
 const response = require('../utils/response');
 
 const getDashboardStats = async (req, res, next) => {
   try {
-    // Empty stats object to avoid hardcoding any mock stats data
-    const stats = {};
+    const stats = await dashboardService.getKPIs();
     return response.success(res, 'Dashboard statistics fetched successfully', stats);
   } catch (error) {
     next(error);
