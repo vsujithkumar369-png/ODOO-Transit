@@ -1,0 +1,31 @@
+.navbar {
+  height: 64px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--accent-primary);
+}
+.navbar-actions {
+  display: flex;
+  gap: 1rem;
+}
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.icon-btn:hover {
+  color: var(--text-primary);
+}
