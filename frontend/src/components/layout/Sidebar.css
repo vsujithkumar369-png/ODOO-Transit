@@ -7,6 +7,7 @@
   left: 0;
   top: 64px;
   overflow-y: auto;
+  transition: transform 0.3s ease-in-out;
 }
 .sidebar-nav {
   padding: 1rem 0;
@@ -29,4 +30,15 @@
   background-color: var(--accent-active);
   color: #ffffff;
   border-right: 3px solid var(--accent-primary);
+}
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    z-index: 100;
+    height: 100vh;
+    top: 0;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
 }

@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Truck, Users, Map, Clock, PenTool, Droplet, DollarSign, FileText, Settings, Shield, Navigation } from 'lucide-react';
 import './Sidebar.css';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   const [role, setRole] = useState('Financial Analyst');
 
   const menus = {
@@ -47,14 +47,14 @@ const Sidebar = () => {
   const currentMenu = menus[role] || menus['Fleet Manager'];
 
   return (
-    <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column' }}>
+    <aside className={`sidebar ${isOpen ? 'open' : ''}`} style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ padding: '1.5rem', color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>
         {role} Navigation
       </div>
       
       <nav className="sidebar-nav" style={{ flex: 1 }}>
         {currentMenu.map(item => (
-          <NavLink key={item.name} to={item.path} className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>
+          <NavLink key={item.name} to={item.path} onClick={onClose} className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>
             {item.icon}
             <span>{item.name}</span>
           </NavLink>

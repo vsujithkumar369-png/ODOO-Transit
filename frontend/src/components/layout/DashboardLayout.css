@@ -11,8 +11,22 @@
   background-color: var(--bg-primary);
   min-height: calc(100vh - 64px);
 }
+.sidebar-overlay {
+  display: none;
+}
 @media (max-width: 768px) {
   .dashboard-main {
     margin-left: 0;
+    padding: 1rem;
+  }
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 90;
   }
 }
