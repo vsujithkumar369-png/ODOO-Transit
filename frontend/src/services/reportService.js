@@ -9,5 +9,21 @@ const fallbackFuelReports = [
 export const reportService = {
   async getFuelEfficiency(query = '') {
     return request('GET', `/reports/fuel-efficiency${query}`, null, fallbackFuelReports);
+  },
+
+  async getOperationalCost() {
+    return request('GET', '/reports/operational-costs', null, []);
+  },
+
+  async getFleetUtilization() {
+    return request('GET', '/reports/fleet-utilization', null, []);
+  },
+
+  async getVehicleROI() {
+    return request('GET', '/reports/vehicle-roi', null, []);
+  },
+
+  async getBudget() {
+    return request('GET', '/reports/budget', null, []);
   }
 };

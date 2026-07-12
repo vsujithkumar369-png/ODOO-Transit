@@ -9,5 +9,19 @@ const fallbackExpenses = [
 export const expenseService = {
   async list() {
     return request('GET', '/expenses', null, fallbackExpenses);
+  },
+
+  async create(expenseData) {
+    const fallback = {
+      id: Math.floor(Math.random() * 1000) + 100,
+      ...expenseData,
+      created_at: new Date().toISOString()
+    };
+    return request('POST', '/expenses', expenseData, fallback);
+  },
+
+  async delete(id) {
+    const fallback = { id };
+    return request('DELETE', `/expenses/${id}`, null, fallback);
   }
 };

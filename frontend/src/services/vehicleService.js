@@ -46,5 +46,10 @@ export const vehicleService = {
       created_at: new Date().toISOString()
     };
     return request('POST', '/vehicles', vehicleData, fallback);
+  },
+
+  async delete(id) {
+    const fallback = { id };
+    return request('DELETE', `/vehicles/${id}`, null, fallback);
   }
 };

@@ -9,5 +9,20 @@ const fallbackDrivers = [
 export const driverService = {
   async list() {
     return request('GET', '/drivers', null, fallbackDrivers);
+  },
+
+  async create(driverData) {
+    const fallback = {
+      id: Math.floor(Math.random() * 1000) + 100,
+      ...driverData,
+      status: "Available",
+      created_at: new Date().toISOString()
+    };
+    return request('POST', '/drivers', driverData, fallback);
+  },
+
+  async delete(id) {
+    const fallback = { id };
+    return request('DELETE', `/drivers/${id}`, null, fallback);
   }
 };
