@@ -178,6 +178,14 @@ const cancelTrip = async (id) => {
   }
 };
 
+const getDriverCurrentTrip = async (userId) => {
+  return tripRepository.findCurrentByDriverUserId(userId);
+};
+
+const getDriverTripHistory = async (userId) => {
+  return tripRepository.findHistoryByDriverUserId(userId);
+};
+
 module.exports = {
   createTripDraft,
   getTrips,
@@ -186,5 +194,7 @@ module.exports = {
   deleteTrip,
   dispatchTrip,
   completeTrip,
-  cancelTrip
+  cancelTrip,
+  getDriverCurrentTrip,
+  getDriverTripHistory
 };

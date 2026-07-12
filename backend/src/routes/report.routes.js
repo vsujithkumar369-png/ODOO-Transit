@@ -12,5 +12,6 @@ router.get('/fuel-efficiency', reportController.getFuelEfficiencyReport);
 router.get('/operational-costs', reportController.getOperationalCostReport);
 router.get('/fleet-utilization', reportController.getFleetUtilizationReport);
 router.get('/vehicle-roi', reportController.getVehicleROIReport);
+router.get('/budget', reportController.getBudgetReport);
 
 module.exports = router;

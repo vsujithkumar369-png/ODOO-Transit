@@ -14,6 +14,7 @@ const fuelRoutes = require('./routes/fuel.routes');
 const expenseRoutes = require('./routes/expense.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const reportRoutes = require('./routes/report.routes');
+const safetyRoutes = require('./routes/safety.routes');
 
 const app = express();
 
@@ -50,6 +51,7 @@ app.use('/api/fuel', fuelRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/safety', safetyRoutes);
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {

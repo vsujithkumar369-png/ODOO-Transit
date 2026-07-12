@@ -36,9 +36,20 @@ const findById = async (id) => {
   return stmt.get(id);
 };
 
+const update = async (id, { name, email, phone }) => {
+  const stmt = db.prepare(`
+    UPDATE users
+    SET name = ?, email = ?, phone = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `);
+  stmt.run(name, email, phone, id);
+  return findById(id);
+};
+
 module.exports = {
   create,
   findByEmail,
   findByPhone,
-  findById
+  findById,
+  update
 };

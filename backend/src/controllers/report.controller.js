@@ -47,9 +47,19 @@ const getVehicleROIReport = async (req, res, next) => {
   }
 };
 
+const getBudgetReport = async (req, res, next) => {
+  try {
+    const data = await reportService.getBudgetReport();
+    return handleReportResponse(res, req.query.export, 'budget_report', data);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getFuelEfficiencyReport,
   getOperationalCostReport,
   getFleetUtilizationReport,
-  getVehicleROIReport
+  getVehicleROIReport,
+  getBudgetReport
 };

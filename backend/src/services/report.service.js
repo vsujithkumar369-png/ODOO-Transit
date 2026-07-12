@@ -35,10 +35,15 @@ const exportReportToCSV = (data) => {
   return [headerRow, ...rows].join('\r\n');
 };
 
+const getBudgetReport = async () => {
+  return reportRepository.getBudgetReport();
+};
+
 module.exports = {
   getFuelEfficiencyReport,
   getOperationalCostReport,
   getFleetUtilizationReport,
   getVehicleROIReport,
+  getBudgetReport,
   exportReportToCSV
 };

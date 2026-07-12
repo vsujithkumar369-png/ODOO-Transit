@@ -78,8 +78,38 @@ const getUserProfile = async (userId) => {
   return user;
 };
 
+const updateUserProfile = async (userId, { name, email, phone }) => {
+  const existingUser = await userRepository.findById(userId);
+  if (!existingUser) {
+    const error = new Error('User not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (email !== existingUser.email) {
+    const emailExists = await userRepository.findByEmail(email);
+    if (emailExists) {
+      const error = new Error('Email is already registered');
+      error.statusCode = 400;
+      throw error;
+    }
+  }
+
+  if (phone !== existingUser.phone) {
+    const phoneExists = await userRepository.findByPhone(phone);
+    if (phoneExists) {
+      const error = new Error('Phone number is already registered');
+      error.statusCode = 400;
+      throw error;
+    }
+  }
+
+  return userRepository.update(userId, { name, email, phone });
+};
+
 module.exports = {
   registerUser,
   loginUser,
-  getUserProfile
+  getUserProfile,
+  updateUserProfile
 };

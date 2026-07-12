@@ -36,9 +36,19 @@ const logout = async (req, res, next) => {
   }
 };
 
+const updateProfile = async (req, res, next) => {
+  try {
+    const user = await authService.updateUserProfile(req.user.id, req.body);
+    return response.success(res, 'User profile updated successfully', user);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   getMe,
-  logout
+  logout,
+  updateProfile
 };

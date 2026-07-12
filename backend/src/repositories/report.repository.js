@@ -121,10 +121,25 @@ const getVehicleROI = async () => {
   return stmt.all();
 };
 
+const getBudgetReport = async () => {
+  const fuelRow = db.prepare("SELECT SUM(cost) as total FROM fuel_logs WHERE log_date >= strftime('%Y-%m-01', 'now')").get();
+  const maintRow = db.prepare("SELECT SUM(cost) as total FROM maintenance WHERE start_date >= strftime('%Y-%m-01', 'now')").get();
+  const salaryRow = db.prepare("SELECT SUM(amount) as total FROM expenses WHERE category = 'Salary' AND expense_date >= strftime('%Y-%m-01', 'now')").get();
+  const insuranceRow = db.prepare("SELECT SUM(amount) as total FROM expenses WHERE category IN ('Insurance', 'Tolls', 'Tolls & Fees') AND expense_date >= strftime('%Y-%m-01', 'now')").get();
+
+  return [
+    { department: 'Fuel Budget', actual: parseFloat(fuelRow.total || 0), limit: 50000.00, color: 'var(--warning)' },
+    { department: 'Maintenance Budget', actual: parseFloat(maintRow.total || 0), limit: 25000.00, color: 'var(--success)' },
+    { department: 'Driver Salaries', actual: parseFloat(salaryRow.total || 0), limit: 90000.00, color: 'var(--accent-primary)' },
+    { department: 'Insurance & Tolls', actual: parseFloat(insuranceRow.total || 0), limit: 15000.00, color: 'var(--danger)' }
+  ];
+};
+
 module.exports = {
   getDashboardKPIs,
   getFuelEfficiency,
   getOperationalCost,
   getFleetUtilization,
-  getVehicleROI
+  getVehicleROI,
+  getBudgetReport
 };

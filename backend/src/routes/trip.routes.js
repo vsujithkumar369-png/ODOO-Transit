@@ -9,6 +9,9 @@ const router = express.Router();
 
 router.use(authMiddleware);
 
+router.get('/driver/current', roleMiddleware('Driver'), tripController.getDriverCurrentTrip);
+router.get('/driver/history', roleMiddleware('Driver'), tripController.getDriverTripHistory);
+
 router.get('/', tripController.getAllTrips);
 router.get('/:id', tripController.getTripById);
 

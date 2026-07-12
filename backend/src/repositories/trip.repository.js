@@ -93,6 +93,31 @@ const remove = async (id) => {
   return trip;
 };
 
+const findCurrentByDriverUserId = async (userId) => {
+  const stmt = db.prepare(`
+    SELECT t.*, v.plate_number, v.model as vehicle_model, u.name as driver_name
+    FROM trips t
+    JOIN drivers d ON t.driver_id = d.id
+    JOIN users u ON d.user_id = u.id
+    LEFT JOIN vehicles v ON t.vehicle_id = v.id
+    WHERE u.id = ? AND t.status = 'Dispatched'
+  `);
+  return stmt.get(userId);
+};
+
+const findHistoryByDriverUserId = async (userId) => {
+  const stmt = db.prepare(`
+    SELECT t.*, v.plate_number, v.model as vehicle_model, u.name as driver_name
+    FROM trips t
+    JOIN drivers d ON t.driver_id = d.id
+    JOIN users u ON d.user_id = u.id
+    LEFT JOIN vehicles v ON t.vehicle_id = v.id
+    WHERE u.id = ? AND t.status IN ('Completed', 'Cancelled')
+    ORDER BY t.id DESC
+  `);
+  return stmt.all(userId);
+};
+
 module.exports = {
   create,
   findAll,
@@ -102,5 +127,7 @@ module.exports = {
   dispatch,
   complete,
   cancel,
-  remove
+  remove,
+  findCurrentByDriverUserId,
+  findHistoryByDriverUserId
 };

@@ -73,6 +73,24 @@ const cancelTrip = async (req, res, next) => {
   }
 };
 
+const getDriverCurrentTrip = async (req, res, next) => {
+  try {
+    const trip = await tripService.getDriverCurrentTrip(req.user.id);
+    return response.success(res, 'Active driver trip fetched successfully', trip || null);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getDriverTripHistory = async (req, res, next) => {
+  try {
+    const trips = await tripService.getDriverTripHistory(req.user.id);
+    return response.success(res, 'Driver trip history fetched successfully', trips);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllTrips,
   getTripById,
@@ -81,5 +99,7 @@ module.exports = {
   deleteTrip,
   dispatchTrip,
   completeTrip,
-  cancelTrip
+  cancelTrip,
+  getDriverCurrentTrip,
+  getDriverTripHistory
 };
