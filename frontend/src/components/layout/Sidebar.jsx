@@ -4,7 +4,7 @@ import { LayoutDashboard, Truck, Users, Map, Clock, PenTool, Droplet, DollarSign
 import './Sidebar.css';
 
 const Sidebar = ({ isOpen, onClose }) => {
-  const [role, setRole] = useState('Financial Analyst');
+  const [role, setRole] = useState(() => localStorage.getItem('mockRole') || 'Financial Analyst');
 
   const menus = {
     'Fleet Manager': [
@@ -65,7 +65,11 @@ const Sidebar = ({ isOpen, onClose }) => {
         <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Switch Role (Mock):</label>
         <select 
           value={role} 
-          onChange={(e) => setRole(e.target.value)}
+          onChange={(e) => {
+            const val = e.target.value;
+            setRole(val);
+            localStorage.setItem('mockRole', val);
+          }}
           style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
         >
           {Object.keys(menus).map(r => (
