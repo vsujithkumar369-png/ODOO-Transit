@@ -4,7 +4,7 @@ import { LayoutDashboard, Truck, Users, Map, Clock, PenTool, Droplet, DollarSign
 import './Sidebar.css';
 
 const Sidebar = () => {
-  const [role, setRole] = useState('Fleet Manager');
+  const [role, setRole] = useState('Financial Analyst');
 
   const menus = {
     'Fleet Manager': [
