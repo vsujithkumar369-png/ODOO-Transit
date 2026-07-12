@@ -5,15 +5,12 @@ import Card from '../../components/common/Card';
 const Expenses = () => {
   return (
     <DashboardLayout>
-      <div className="page-header" style={{marginBottom: '2rem'}}>
-        <h2>fleetManager / Expenses</h2>
-        <p style={{color: 'var(--text-secondary)'}}>Home > fleetManager > Expenses</p>
+      <div className="page-header" style={{ marginBottom: '2rem' }}>
+        <h2>Operational Expenses</h2>
       </div>
-      <div className="page-content">
-        <Card title="Expenses Overview">
-          <p>This is a placeholder for the Expenses page.</p>
-        </Card>
-      </div>
+      <Card title="Operational Expenses Data">
+        <p>This is a placeholder page for Operational Expenses waiting for API integration.</p>
+      </Card>
     </DashboardLayout>
   );
 };

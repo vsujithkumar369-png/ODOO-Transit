@@ -5,15 +5,12 @@ import Card from '../../components/common/Card';
 const Maintenance = () => {
   return (
     <DashboardLayout>
-      <div className="page-header" style={{marginBottom: '2rem'}}>
-        <h2>fleetManager / Maintenance</h2>
-        <p style={{color: 'var(--text-secondary)'}}>Home > fleetManager > Maintenance</p>
+      <div className="page-header" style={{ marginBottom: '2rem' }}>
+        <h2>Maintenance Logs</h2>
       </div>
-      <div className="page-content">
-        <Card title="Maintenance Overview">
-          <p>This is a placeholder for the Maintenance page.</p>
-        </Card>
-      </div>
+      <Card title="Maintenance Logs Data">
+        <p>This is a placeholder page for Maintenance Logs waiting for API integration.</p>
+      </Card>
     </DashboardLayout>
   );
 };

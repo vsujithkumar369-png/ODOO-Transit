@@ -5,15 +5,12 @@ import Card from '../../components/common/Card';
 const Settings = () => {
   return (
     <DashboardLayout>
-      <div className="page-header" style={{marginBottom: '2rem'}}>
-        <h2>fleetManager / Settings</h2>
-        <p style={{color: 'var(--text-secondary)'}}>Home > fleetManager > Settings</p>
+      <div className="page-header" style={{ marginBottom: '2rem' }}>
+        <h2>Account Settings</h2>
       </div>
-      <div className="page-content">
-        <Card title="Settings Overview">
-          <p>This is a placeholder for the Settings page.</p>
-        </Card>
-      </div>
+      <Card title="Account Settings Data">
+        <p>This is a placeholder page for Account Settings waiting for API integration.</p>
+      </Card>
     </DashboardLayout>
   );
 };

@@ -5,15 +5,12 @@ import Card from '../../components/common/Card';
 const DispatchHistory = () => {
   return (
     <DashboardLayout>
-      <div className="page-header" style={{marginBottom: '2rem'}}>
-        <h2>fleetManager / DispatchHistory</h2>
-        <p style={{color: 'var(--text-secondary)'}}>Home > fleetManager > DispatchHistory</p>
+      <div className="page-header" style={{ marginBottom: '2rem' }}>
+        <h2>Dispatch History</h2>
       </div>
-      <div className="page-content">
-        <Card title="DispatchHistory Overview">
-          <p>This is a placeholder for the DispatchHistory page.</p>
-        </Card>
-      </div>
+      <Card title="Dispatch History Data">
+        <p>This is a placeholder page for Dispatch History waiting for API integration.</p>
+      </Card>
     </DashboardLayout>
   );
 };
