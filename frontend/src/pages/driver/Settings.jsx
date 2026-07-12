@@ -3,7 +3,7 @@ import DashboardLayout from '../../components/layout/DashboardLayout';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import useAuth from '../../hooks/useAuth';
-import { NotificationContext } from '../../context/NotificationContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { User, Shield, Bell, Palette, Globe, LogOut, Save, Eye, EyeOff } from 'lucide-react';
 
 const inputStyle = (err) => ({
@@ -48,7 +48,7 @@ const SectionHeader = ({ icon, title }) => (
 
 const Settings = () => {
   const { user, updateUser, logout } = useAuth();
-  const { addNotification } = useContext(NotificationContext);
+  const { addNotification } = useNotifications();
 
   // Profile form
   const [profile, setProfile] = useState({ name: user?.name || '', email: user?.email || '', contact: user?.contact || '' });

@@ -1,14 +1,14 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import StatusBadge from '../../components/common/StatusBadge';
-import { TripsContext } from '../../context/TripsContext';
+import { useTrips } from '../../context/TripsContext';
 import { Clock, Search, X, Filter, Eye, CheckCircle, XCircle, TrendingUp, Droplet } from 'lucide-react';
 
 const TripHistory = () => {
-  const { trips, fuelLogs } = useContext(TripsContext);
+  const { trips, fuelLogs } = useTrips();
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');

@@ -4,8 +4,8 @@ import DashboardLayout from '../../components/layout/DashboardLayout';
 import Card from '../../components/common/Card';
 import StatusBadge from '../../components/common/StatusBadge';
 import useAuth from '../../hooks/useAuth';
-import { TripsContext } from '../../context/TripsContext';
-import { NotificationContext } from '../../context/NotificationContext';
+import { useTrips } from '../../context/TripsContext';
+import { useNotifications } from '../../context/NotificationContext';
 import {
   Map, Navigation, CheckCircle, Droplet, TrendingUp, Activity,
   ArrowRight, Clock, Bell
@@ -58,8 +58,8 @@ const QuickAction = ({ label, path, icon, color }) => {
 /* ─── Dashboard ─── */
 const Dashboard = () => {
   const { user } = useAuth();
-  const { trips, fuelLogs, activeTrip, stats } = useContext(TripsContext);
-  const { notifications } = useContext(NotificationContext);
+  const { trips, fuelLogs, activeTrip, stats } = useTrips();
+  const { notifications } = useNotifications();
 
   const recentTrips = [...trips]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))

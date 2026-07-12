@@ -3,8 +3,8 @@ import DashboardLayout from '../../components/layout/DashboardLayout';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import useAuth from '../../hooks/useAuth';
-import { NotificationContext } from '../../context/NotificationContext';
-import { TripsContext } from '../../context/TripsContext';
+import { useNotifications } from '../../context/NotificationContext';
+import { useTrips } from '../../context/TripsContext';
 import { User, Mail, Phone, Shield, Star, Calendar, Camera, Save, CheckCircle } from 'lucide-react';
 
 const inputStyle = {
@@ -16,8 +16,8 @@ const inputStyle = {
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
-  const { addNotification } = useContext(NotificationContext);
-  const { stats } = useContext(TripsContext);
+  const { addNotification } = useNotifications();
+  const { stats } = useTrips();
 
   const fileRef = useRef(null);
   const [saved, setSaved] = useState(false);

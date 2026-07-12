@@ -4,15 +4,15 @@ import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import StatusBadge from '../../components/common/StatusBadge';
-import { TripsContext } from '../../context/TripsContext';
-import { NotificationContext } from '../../context/NotificationContext';
+import { useTrips } from '../../context/TripsContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { Navigation, Truck, MapPin, Package, Clock, CheckCircle, TrendingUp } from 'lucide-react';
 
 const PROGRESS_STEPS = [0, 25, 50, 75, 100];
 
 const CurrentTrip = () => {
-  const { activeTrip, updateProgress, completeTrip } = useContext(TripsContext);
-  const { addNotification } = useContext(NotificationContext);
+  const { activeTrip, updateProgress, completeTrip } = useTrips();
+  const { addNotification } = useNotifications();
 
   const [showComplete, setShowComplete] = useState(false);
   const [newProgress, setNewProgress] = useState(activeTrip?.progress || 0);

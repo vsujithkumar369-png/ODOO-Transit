@@ -19,7 +19,14 @@ function seedDemoUsers() {
 
 seedDemoUsers();
 
-export const AuthProvider = ({ children }) => {
+// eslint-disable-next-line react-refresh/only-export-components
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used inside AuthProvider');
+  return ctx;
+};
+
+const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
       const stored = localStorage.getItem('transitops_user');
@@ -43,18 +50,18 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const updateUser = useCallback((updates) => {
-    const updated = { ...user, ...updates };
-    localStorage.setItem('transitops_user', JSON.stringify(updated));
-    // Also update in users list
-    const users = JSON.parse(localStorage.getItem('transitops_users') || '[]');
-    const idx = users.findIndex(u => u.id === updated.id);
-    if (idx !== -1) {
-      users[idx] = { ...users[idx], ...updates };
-      localStorage.setItem('transitops_users', JSON.stringify(users));
-    }
-    setUser(updated);
-    return updated;
-  }, [user]);
+    setUser(prev => {
+      const updated = { ...prev, ...updates };
+      localStorage.setItem('transitops_user', JSON.stringify(updated));
+      const users = JSON.parse(localStorage.getItem('transitops_users') || '[]');
+      const idx = users.findIndex(u => u.id === updated.id);
+      if (idx !== -1) {
+        users[idx] = { ...users[idx], ...updates };
+        localStorage.setItem('transitops_users', JSON.stringify(users));
+      }
+      return updated;
+    });
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, login, logout, updateUser }}>
@@ -63,4 +70,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export default AuthContext;
+export default AuthProvider;

@@ -1,12 +1,12 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import StatusBadge from '../../components/common/StatusBadge';
 import useAuth from '../../hooks/useAuth';
-import { TripsContext } from '../../context/TripsContext';
-import { NotificationContext } from '../../context/NotificationContext';
+import { useTrips } from '../../context/TripsContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { Map, Plus, Search, Eye, Play, CheckCircle, Pencil, Trash2, X, Filter } from 'lucide-react';
 
 const STATUSES = ['All', 'Pending', 'Active', 'Completed', 'Cancelled'];
@@ -38,8 +38,8 @@ const inputStyle = (hasErr) => ({
 
 const MyTrips = () => {
   const { user } = useAuth();
-  const { trips, addTrip, updateTrip, deleteTrip, startTrip, completeTrip } = useContext(TripsContext);
-  const { addNotification } = useContext(NotificationContext);
+  const { trips, addTrip, updateTrip, deleteTrip, startTrip, completeTrip } = useTrips();
+  const { addNotification } = useNotifications();
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');

@@ -1,10 +1,2 @@
-import { useContext } from 'react';
-import { ThemeContext } from '../context/ThemeContext';
-
-const useTheme = () => {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error('useTheme must be inside ThemeProvider');
-  return ctx;
-};
-
-export default useTheme;
+// useTheme is now exported directly from ThemeContext
+export { useTheme as default } from '../context/ThemeContext';

@@ -6,31 +6,28 @@ const STORAGE_KEY = 'transitops_notifications';
 
 const generateId = () => `notif_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 
-const formatTime = () => {
-  return new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+const formatTime = () => new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useNotifications = () => {
+  const ctx = useContext(NotificationContext);
+  if (!ctx) throw new Error('useNotifications must be used inside NotificationProvider');
+  return ctx;
 };
 
-export const NotificationProvider = ({ children }) => {
+const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    } catch { return []; }
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+    catch { return []; }
   });
 
-  // Persist to localStorage whenever notifications change
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(notifications));
   }, [notifications]);
 
   const addNotification = useCallback((type, message) => {
-    const notif = {
-      id: generateId(),
-      type,
-      message,
-      date: formatTime(),
-      read: false,
-    };
-    setNotifications(prev => [notif, ...prev].slice(0, 50)); // keep max 50
+    const notif = { id: generateId(), type, message, date: formatTime(), read: false };
+    setNotifications(prev => [notif, ...prev].slice(0, 50));
   }, []);
 
   const markAllRead = useCallback(() => {
@@ -45,31 +42,18 @@ export const NotificationProvider = ({ children }) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
   }, []);
 
-  const clearAll = useCallback(() => {
-    setNotifications([]);
-  }, []);
+  const clearAll = useCallback(() => setNotifications([]), []);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <NotificationContext.Provider value={{
-      notifications,
-      unreadCount,
-      addNotification,
-      markAllRead,
-      markRead,
-      deleteNotification,
-      clearAll,
+      notifications, unreadCount,
+      addNotification, markAllRead, markRead, deleteNotification, clearAll,
     }}>
       {children}
     </NotificationContext.Provider>
   );
 };
 
-export const useNotifications = () => {
-  const ctx = useContext(NotificationContext);
-  if (!ctx) throw new Error('useNotifications must be used inside NotificationProvider');
-  return ctx;
-};
-
-export default NotificationContext;
+export default NotificationProvider;

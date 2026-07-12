@@ -1,11 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import useAuth from '../../hooks/useAuth';
-import { TripsContext } from '../../context/TripsContext';
-import { NotificationContext } from '../../context/NotificationContext';
+import { useTrips } from '../../context/TripsContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { Droplet, Plus, Search, X, Pencil, Trash2, Filter } from 'lucide-react';
 
 const BLANK = { vehicle: '', driverName: '', quantity: '', cost: '', station: '', date: '', remarks: '' };
@@ -19,8 +19,8 @@ const inputStyle = (err) => ({
 
 const FuelLogs = () => {
   const { user } = useAuth();
-  const { fuelLogs, addFuelLog, updateFuelLog, deleteFuelLog, stats } = useContext(TripsContext);
-  const { addNotification } = useContext(NotificationContext);
+  const { fuelLogs, addFuelLog, updateFuelLog, deleteFuelLog, stats } = useTrips();
+  const { addNotification } = useNotifications();
 
   const [search, setSearch] = useState('');
   const [dateFilter, setDateFilter] = useState('');

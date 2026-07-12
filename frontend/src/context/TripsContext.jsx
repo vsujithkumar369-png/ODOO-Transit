@@ -6,10 +6,8 @@ const TRIPS_KEY = 'transitops_trips';
 const FUEL_KEY = 'transitops_fuel_logs';
 
 const generateId = (prefix) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 5).toUpperCase()}`;
-
 const todayStr = () => new Date().toISOString().split('T')[0];
 
-// Seed realistic demo data
 const DEMO_TRIPS = [
   { id: 'TRP-001', source: 'Chennai', destination: 'Bangalore', vehicle: 'TN-01-AB-1234', cargoType: 'Electronics', cargoWeight: 2500, startDate: '2025-07-01', endDate: '2025-07-01', status: 'Completed', distance: 346, progress: 100, createdAt: '2025-07-01' },
   { id: 'TRP-002', source: 'Bangalore', destination: 'Mumbai', vehicle: 'TN-02-CD-5678', cargoType: 'Textiles', cargoWeight: 3200, startDate: '2025-07-05', endDate: '2025-07-06', status: 'Completed', distance: 984, progress: 100, createdAt: '2025-07-05' },
@@ -26,42 +24,32 @@ const DEMO_FUEL = [
 ];
 
 function seedData() {
-  if (!localStorage.getItem(TRIPS_KEY)) {
-    localStorage.setItem(TRIPS_KEY, JSON.stringify(DEMO_TRIPS));
-  }
-  if (!localStorage.getItem(FUEL_KEY)) {
-    localStorage.setItem(FUEL_KEY, JSON.stringify(DEMO_FUEL));
-  }
+  if (!localStorage.getItem(TRIPS_KEY)) localStorage.setItem(TRIPS_KEY, JSON.stringify(DEMO_TRIPS));
+  if (!localStorage.getItem(FUEL_KEY)) localStorage.setItem(FUEL_KEY, JSON.stringify(DEMO_FUEL));
 }
-
 seedData();
 
-export const TripsProvider = ({ children }) => {
+// eslint-disable-next-line react-refresh/only-export-components
+export const useTrips = () => {
+  const ctx = useContext(TripsContext);
+  if (!ctx) throw new Error('useTrips must be inside TripsProvider');
+  return ctx;
+};
+
+const TripsProvider = ({ children }) => {
   const [trips, setTrips] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(TRIPS_KEY) || '[]'); }
-    catch { return []; }
+    try { return JSON.parse(localStorage.getItem(TRIPS_KEY) || '[]'); } catch { return []; }
   });
 
   const [fuelLogs, setFuelLogs] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(FUEL_KEY) || '[]'); }
-    catch { return []; }
+    try { return JSON.parse(localStorage.getItem(FUEL_KEY) || '[]'); } catch { return []; }
   });
 
-  // Persist trips
   useEffect(() => { localStorage.setItem(TRIPS_KEY, JSON.stringify(trips)); }, [trips]);
-  // Persist fuel logs
   useEffect(() => { localStorage.setItem(FUEL_KEY, JSON.stringify(fuelLogs)); }, [fuelLogs]);
 
-  // ─────────────── TRIPS CRUD ───────────────
-
   const addTrip = useCallback((tripData) => {
-    const newTrip = {
-      ...tripData,
-      id: generateId('TRP'),
-      status: tripData.status || 'Pending',
-      progress: 0,
-      createdAt: todayStr(),
-    };
+    const newTrip = { ...tripData, id: generateId('TRP'), status: tripData.status || 'Pending', progress: 0, createdAt: todayStr() };
     setTrips(prev => [newTrip, ...prev]);
     return newTrip;
   }, []);
@@ -75,37 +63,23 @@ export const TripsProvider = ({ children }) => {
   }, []);
 
   const startTrip = useCallback((id) => {
-    setTrips(prev => prev.map(t =>
-      t.id === id ? { ...t, status: 'Active', progress: 0, startedAt: todayStr() } : t
-    ));
+    setTrips(prev => prev.map(t => t.id === id ? { ...t, status: 'Active', progress: 0, startedAt: todayStr() } : t));
   }, []);
 
   const updateProgress = useCallback((id, progress) => {
-    setTrips(prev => prev.map(t =>
-      t.id === id ? { ...t, progress: Math.min(100, Math.max(0, progress)) } : t
-    ));
+    setTrips(prev => prev.map(t => t.id === id ? { ...t, progress: Math.min(100, Math.max(0, progress)) } : t));
   }, []);
 
   const completeTrip = useCallback((id) => {
-    setTrips(prev => prev.map(t =>
-      t.id === id ? { ...t, status: 'Completed', progress: 100, completedAt: todayStr() } : t
-    ));
+    setTrips(prev => prev.map(t => t.id === id ? { ...t, status: 'Completed', progress: 100, completedAt: todayStr() } : t));
   }, []);
 
   const cancelTrip = useCallback((id) => {
-    setTrips(prev => prev.map(t =>
-      t.id === id ? { ...t, status: 'Cancelled' } : t
-    ));
+    setTrips(prev => prev.map(t => t.id === id ? { ...t, status: 'Cancelled' } : t));
   }, []);
 
-  // ─────────────── FUEL LOGS CRUD ───────────────
-
   const addFuelLog = useCallback((logData) => {
-    const newLog = {
-      ...logData,
-      id: generateId('FL'),
-      createdAt: todayStr(),
-    };
+    const newLog = { ...logData, id: generateId('FL'), createdAt: todayStr() };
     setFuelLogs(prev => [newLog, ...prev]);
     return newLog;
   }, []);
@@ -117,8 +91,6 @@ export const TripsProvider = ({ children }) => {
   const deleteFuelLog = useCallback((id) => {
     setFuelLogs(prev => prev.filter(l => l.id !== id));
   }, []);
-
-  // ─────────────── DERIVED STATS ───────────────
 
   const activeTrip = trips.find(t => t.status === 'Active') || null;
 
@@ -144,10 +116,4 @@ export const TripsProvider = ({ children }) => {
   );
 };
 
-export const useTrips = () => {
-  const ctx = useContext(TripsContext);
-  if (!ctx) throw new Error('useTrips must be inside TripsProvider');
-  return ctx;
-};
-
-export default TripsContext;
+export default TripsProvider;

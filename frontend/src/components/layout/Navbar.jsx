@@ -1,14 +1,14 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, User, Menu, LogOut, Settings, ChevronDown, Trash2, CheckCheck } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
-import { NotificationContext } from '../../context/NotificationContext';
+import { useNotifications } from '../../context/NotificationContext';
 import './Navbar.css';
 
 const Navbar = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const { notifications, unreadCount, markAllRead, deleteNotification, clearAll } = useContext(NotificationContext);
+  const { notifications, unreadCount, markAllRead, deleteNotification, clearAll } = useNotifications();
 
   const [showNotif, setShowNotif] = useState(false);
   const [showProfile, setShowProfile] = useState(false);

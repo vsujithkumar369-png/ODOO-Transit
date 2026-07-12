@@ -1,9 +1,9 @@
 import React from 'react';
 import AppRoutes from './routes/AppRoutes';
-import { AuthProvider } from './context/AuthContext';
-import { NotificationProvider } from './context/NotificationContext';
-import { ThemeProvider } from './context/ThemeContext';
-import { TripsProvider } from './context/TripsContext';
+import AuthProvider from './context/AuthContext';
+import NotificationProvider from './context/NotificationContext';
+import ThemeProvider from './context/ThemeContext';
+import TripsProvider from './context/TripsContext';
 
 function App() {
   return (
