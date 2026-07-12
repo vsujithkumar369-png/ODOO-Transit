@@ -5,15 +5,12 @@ import Card from '../../components/common/Card';
 const FuelReports = () => {
   return (
     <DashboardLayout>
-      <div className="page-header" style={{marginBottom: '2rem'}}>
-        <h2>financialAnalyst / FuelReports</h2>
-        <p style={{color: 'var(--text-secondary)'}}>Home > financialAnalyst > FuelReports</p>
+      <div className="page-header" style={{ marginBottom: '2rem' }}>
+        <h2>Fuel Expenditure Reports</h2>
       </div>
-      <div className="page-content">
-        <Card title="FuelReports Overview">
-          <p>This is a placeholder for the FuelReports page.</p>
-        </Card>
-      </div>
+      <Card title="Fuel Expenditure Reports Data">
+        <p>This is a placeholder page for Fuel Expenditure Reports waiting for API integration.</p>
+      </Card>
     </DashboardLayout>
   );
 };

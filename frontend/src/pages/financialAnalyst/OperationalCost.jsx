@@ -5,15 +5,12 @@ import Card from '../../components/common/Card';
 const OperationalCost = () => {
   return (
     <DashboardLayout>
-      <div className="page-header" style={{marginBottom: '2rem'}}>
-        <h2>financialAnalyst / OperationalCost</h2>
-        <p style={{color: 'var(--text-secondary)'}}>Home > financialAnalyst > OperationalCost</p>
+      <div className="page-header" style={{ marginBottom: '2rem' }}>
+        <h2>Operational Cost Analysis</h2>
       </div>
-      <div className="page-content">
-        <Card title="OperationalCost Overview">
-          <p>This is a placeholder for the OperationalCost page.</p>
-        </Card>
-      </div>
+      <Card title="Operational Cost Analysis Data">
+        <p>This is a placeholder page for Operational Cost Analysis waiting for API integration.</p>
+      </Card>
     </DashboardLayout>
   );
 };
