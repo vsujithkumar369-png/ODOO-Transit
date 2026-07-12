@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const { db } = require('../config/db');
 const maintenanceRepository = require('../repositories/maintenance.repository');
 const vehicleRepository = require('../repositories/vehicle.repository');
 
@@ -16,20 +16,17 @@ const createMaintenanceLog = async (logData) => {
     throw error;
   }
 
-  const client = await db.pool.connect();
   try {
-    await client.query('BEGIN');
+    db.prepare('BEGIN').run();
 
-    const newLog = await maintenanceRepository.create(logData, client);
-    await vehicleRepository.updateStatus(logData.vehicle_id, 'In Shop', client);
+    const newLog = await maintenanceRepository.create(logData);
+    await vehicleRepository.updateStatus(logData.vehicle_id, 'In Shop');
 
-    await client.query('COMMIT');
+    db.prepare('COMMIT').run();
     return newLog;
   } catch (error) {
-    await client.query('ROLLBACK');
+    db.prepare('ROLLBACK').run();
     throw error;
-  } finally {
-    client.release();
   }
 };
 
@@ -56,43 +53,36 @@ const closeMaintenanceLog = async (id, cost) => {
     throw error;
   }
 
-  const client = await db.pool.connect();
   try {
-    await client.query('BEGIN');
+    db.prepare('BEGIN').run();
 
-    const updatedLog = await maintenanceRepository.close(id, cost, client);
-    await vehicleRepository.updateStatus(log.vehicle_id, 'Available', client);
+    const updatedLog = await maintenanceRepository.close(id, cost);
+    await vehicleRepository.updateStatus(log.vehicle_id, 'Available');
 
-    await client.query('COMMIT');
+    db.prepare('COMMIT').run();
     return updatedLog;
   } catch (error) {
-    await client.query('ROLLBACK');
+    db.prepare('ROLLBACK').run();
     throw error;
-  } finally {
-    client.release();
   }
 };
 
 const deleteMaintenanceLog = async (id) => {
   const log = await getMaintenanceLogById(id);
   
-  const client = await db.pool.connect();
   try {
-    await client.query('BEGIN');
+    db.prepare('BEGIN').run();
 
-    await maintenanceRepository.remove(id, client);
-    // If the maintenance log was open, restore vehicle status
+    await maintenanceRepository.remove(id);
     if (log.status === 'Open') {
-      await vehicleRepository.updateStatus(log.vehicle_id, 'Available', client);
+      await vehicleRepository.updateStatus(log.vehicle_id, 'Available');
     }
 
-    await client.query('COMMIT');
+    db.prepare('COMMIT').run();
     return log;
   } catch (error) {
-    await client.query('ROLLBACK');
+    db.prepare('ROLLBACK').run();
     throw error;
-  } finally {
-    client.release();
   }
 };
 

@@ -1,57 +1,52 @@
-const db = require('../config/db');
+const { db } = require('../config/db');
 
-const create = async ({ vehicle_id, description, cost }, client = db) => {
-  const queryText = `
+const create = async ({ vehicle_id, description, cost }) => {
+  const stmt = db.prepare(`
     INSERT INTO maintenance (vehicle_id, description, cost, status)
-    VALUES ($1, $2, $3, 'Open')
-    RETURNING *
-  `;
-  const values = [vehicle_id, description, cost || 0.00];
-  const res = await client.query(queryText, values);
-  return res.rows[0];
+    VALUES (?, ?, ?, 'Open')
+  `);
+  const info = stmt.run(vehicle_id, description, cost || 0.00);
+  return findById(info.lastInsertRowid);
 };
 
-const findAll = async (client = db) => {
-  const queryText = `
+const findAll = async () => {
+  const stmt = db.prepare(`
     SELECT m.*, v.plate_number, v.model as vehicle_model
     FROM maintenance m
     LEFT JOIN vehicles v ON m.vehicle_id = v.id
     ORDER BY m.id DESC
-  `;
-  const res = await client.query(queryText);
-  return res.rows;
+  `);
+  return stmt.all();
 };
 
-const findById = async (id, client = db) => {
-  const queryText = `
+const findById = async (id) => {
+  const stmt = db.prepare(`
     SELECT m.*, v.plate_number, v.model as vehicle_model
     FROM maintenance m
     LEFT JOIN vehicles v ON m.vehicle_id = v.id
-    WHERE m.id = $1
-  `;
-  const res = await client.query(queryText, [id]);
-  return res.rows[0];
+    WHERE m.id = ?
+  `);
+  return stmt.get(id);
 };
 
-const close = async (id, cost, client = db) => {
-  const queryText = `
+const close = async (id, cost) => {
+  const stmt = db.prepare(`
     UPDATE maintenance
-    SET status = 'Closed', cost = COALESCE($1, cost), end_date = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
-    WHERE id = $2
-    RETURNING *
-  `;
-  const res = await client.query(queryText, [cost, id]);
-  return res.rows[0];
+    SET status = 'Closed', cost = COALESCE(?, cost), end_date = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `);
+  stmt.run(cost, id);
+  return findById(id);
 };
 
-const remove = async (id, client = db) => {
-  const queryText = `
+const remove = async (id) => {
+  const log = await findById(id);
+  const stmt = db.prepare(`
     DELETE FROM maintenance
-    WHERE id = $1
-    RETURNING *
-  `;
-  const res = await client.query(queryText, [id]);
-  return res.rows[0];
+    WHERE id = ?
+  `);
+  stmt.run(id);
+  return log;
 };
 
 module.exports = {

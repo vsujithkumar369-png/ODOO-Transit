@@ -7,13 +7,8 @@ dotenv.config({ path: path.join(__dirname, '../../.env'), override: true });
 
 const requiredEnv = [
   'PORT',
-  'DB_HOST',
-  'DB_PORT',
-  'DB_USER',
-  'DB_PASSWORD',
-  'DB_NAME',
+  'DATABASE_PATH',
   'JWT_SECRET',
-  'JWT_EXPIRES_IN',
   'CORS_ORIGIN'
 ];
 
@@ -28,23 +23,10 @@ for (const envVar of requiredEnv) {
 module.exports = {
   port: parseInt(process.env.PORT, 10) || 5000,
   nodeEnv: process.env.NODE_ENV || 'development',
-  db: {
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-  },
+  databasePath: process.env.DATABASE_PATH,
   jwt: {
     secret: process.env.JWT_SECRET,
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
+    expiresIn: '24h'
   },
   corsOrigin: process.env.CORS_ORIGIN
 };
-console.log("Loaded DB Config:", {
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
-});

@@ -1,6 +1,6 @@
-const db = require('../config/db');
+const { db } = require('../config/db');
 
-const getDashboardKPIs = async (client = db) => {
+const getDashboardKPIs = async () => {
   const queryText = `
     SELECT
       (SELECT COUNT(*) FROM vehicles WHERE status != 'Retired') as total_vehicles,
@@ -18,10 +18,11 @@ const getDashboardKPIs = async (client = db) => {
         0.00
       ) as fleet_utilization,
       (SELECT COALESCE(SUM(cost), 0.00) FROM fuel_logs) as total_fuel_cost,
-      (SELECT COALESCE(SUM(cost), 0.00) FROM maintenance) as total_maintenance_cost
+      (SELECT COALESCE(SUM(cost), 0.00) FROM maintenance) as total_maintenance_cost,
+      (SELECT COALESCE(SUM(amount), 0.00) FROM expenses WHERE expense_date >= strftime('%Y-%m-01', 'now')) as monthly_expenses
   `;
-  const res = await client.query(queryText);
-  const row = res.rows[0];
+  const stmt = db.prepare(queryText);
+  const row = stmt.get();
   return {
     totalVehicles: parseInt(row.total_vehicles, 10),
     availableVehicles: parseInt(row.available_vehicles, 10),
@@ -31,11 +32,12 @@ const getDashboardKPIs = async (client = db) => {
     driversOnDuty: parseInt(row.drivers_on_duty, 10),
     fleetUtilization: parseFloat(row.fleet_utilization),
     totalFuelCost: parseFloat(row.total_fuel_cost),
-    totalMaintenanceCost: parseFloat(row.total_maintenance_cost)
+    totalMaintenanceCost: parseFloat(row.total_maintenance_cost),
+    monthlyExpenses: parseFloat(row.monthly_expenses)
   };
 };
 
-const getFuelEfficiency = async (client = db) => {
+const getFuelEfficiency = async () => {
   const queryText = `
     SELECT
       v.id as vehicle_id,
@@ -53,11 +55,11 @@ const getFuelEfficiency = async (client = db) => {
     GROUP BY v.id, v.plate_number, v.model
     ORDER BY km_per_liter DESC
   `;
-  const res = await client.query(queryText);
-  return res.rows;
+  const stmt = db.prepare(queryText);
+  return stmt.all();
 };
 
-const getOperationalCost = async (client = db) => {
+const getOperationalCost = async () => {
   const queryText = `
     SELECT
       category,
@@ -67,11 +69,11 @@ const getOperationalCost = async (client = db) => {
     GROUP BY category
     ORDER BY total_cost DESC
   `;
-  const res = await client.query(queryText);
-  return res.rows;
+  const stmt = db.prepare(queryText);
+  return stmt.all();
 };
 
-const getFleetUtilization = async (client = db) => {
+const getFleetUtilization = async () => {
   const queryText = `
     SELECT
       status,
@@ -81,11 +83,11 @@ const getFleetUtilization = async (client = db) => {
     WHERE status != 'Retired'
     GROUP BY status
   `;
-  const res = await client.query(queryText);
-  return res.rows;
+  const stmt = db.prepare(queryText);
+  return stmt.all();
 };
 
-const getVehicleROI = async (client = db) => {
+const getVehicleROI = async () => {
   const queryText = `
     SELECT
       v.id as vehicle_id,
@@ -115,8 +117,8 @@ const getVehicleROI = async (client = db) => {
     WHERE v.status != 'Retired'
     ORDER BY net_roi DESC
   `;
-  const res = await client.query(queryText);
-  return res.rows;
+  const stmt = db.prepare(queryText);
+  return stmt.all();
 };
 
 module.exports = {

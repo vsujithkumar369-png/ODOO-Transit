@@ -1,60 +1,54 @@
-const db = require('../config/db');
+const { db } = require('../config/db');
 
-const create = async ({ vehicle_id, trip_id, category, amount, description, expense_date }, client = db) => {
-  const queryText = `
+const create = async ({ vehicle_id, trip_id, category, amount, description, expense_date }) => {
+  const stmt = db.prepare(`
     INSERT INTO expenses (vehicle_id, trip_id, category, amount, description, expense_date)
-    VALUES ($1, $2, $3, $4, $5, COALESCE($6, CURRENT_DATE))
-    RETURNING *
-  `;
-  const values = [vehicle_id, trip_id, category, amount, description, expense_date];
-  const res = await client.query(queryText, values);
-  return res.rows[0];
+    VALUES (?, ?, ?, ?, ?, COALESCE(?, date('now')))
+  `);
+  const info = stmt.run(vehicle_id, trip_id, category, amount, description, expense_date);
+  return findById(info.lastInsertRowid);
 };
 
-const findAll = async (client = db) => {
-  const queryText = `
+const findAll = async () => {
+  const stmt = db.prepare(`
     SELECT e.*, v.plate_number, t.trip_number
     FROM expenses e
     LEFT JOIN vehicles v ON e.vehicle_id = v.id
     LEFT JOIN trips t ON e.trip_id = t.id
     ORDER BY e.id DESC
-  `;
-  const res = await client.query(queryText);
-  return res.rows;
+  `);
+  return stmt.all();
 };
 
-const findById = async (id, client = db) => {
-  const queryText = `
+const findById = async (id) => {
+  const stmt = db.prepare(`
     SELECT e.*, v.plate_number, t.trip_number
     FROM expenses e
     LEFT JOIN vehicles v ON e.vehicle_id = v.id
     LEFT JOIN trips t ON e.trip_id = t.id
-    WHERE e.id = $1
-  `;
-  const res = await client.query(queryText, [id]);
-  return res.rows[0];
+    WHERE e.id = ?
+  `);
+  return stmt.get(id);
 };
 
-const update = async (id, { vehicle_id, trip_id, category, amount, description, expense_date }, client = db) => {
-  const queryText = `
+const update = async (id, { vehicle_id, trip_id, category, amount, description, expense_date }) => {
+  const stmt = db.prepare(`
     UPDATE expenses
-    SET vehicle_id = $1, trip_id = $2, category = $3, amount = $4, description = $5, expense_date = $6, updated_at = CURRENT_TIMESTAMP
-    WHERE id = $7
-    RETURNING *
-  `;
-  const values = [vehicle_id, trip_id, category, amount, description, expense_date, id];
-  const res = await client.query(queryText, values);
-  return res.rows[0];
+    SET vehicle_id = ?, trip_id = ?, category = ?, amount = ?, description = ?, expense_date = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `);
+  stmt.run(vehicle_id, trip_id, category, amount, description, expense_date, id);
+  return findById(id);
 };
 
-const remove = async (id, client = db) => {
-  const queryText = `
+const remove = async (id) => {
+  const expense = await findById(id);
+  const stmt = db.prepare(`
     DELETE FROM expenses
-    WHERE id = $1
-    RETURNING *
-  `;
-  const res = await client.query(queryText, [id]);
-  return res.rows[0];
+    WHERE id = ?
+  `);
+  stmt.run(id);
+  return expense;
 };
 
 module.exports = {

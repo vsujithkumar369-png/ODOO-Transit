@@ -1,99 +1,90 @@
-const db = require('../config/db');
+const { db } = require('../config/db');
 
-const create = async ({ plate_number, model, type, capacity, region, status }, client = db) => {
-  const queryText = `
+const create = async ({ plate_number, model, type, capacity, region, status }) => {
+  const stmt = db.prepare(`
     INSERT INTO vehicles (plate_number, model, type, capacity, region, status)
-    VALUES ($1, $2, $3, $4, $5, $6)
-    RETURNING *
-  `;
-  const values = [plate_number, model, type, capacity, region || null, status || 'Available'];
-  const res = await client.query(queryText, values);
-  return res.rows[0];
+    VALUES (?, ?, ?, ?, ?, ?)
+  `);
+  const info = stmt.run(plate_number, model, type, capacity, region || null, status || 'Available');
+  return findById(info.lastInsertRowid);
 };
 
-const findAll = async (filters = {}, client = db) => {
+const findAll = async (filters = {}) => {
   let queryText = `SELECT * FROM vehicles WHERE status != 'Retired'`;
   const values = [];
-  let index = 1;
 
   if (filters.status) {
-    queryText += ` AND status = $${index++}`;
+    queryText += ` AND status = ?`;
     values.push(filters.status);
   }
   if (filters.type) {
-    queryText += ` AND type = $${index++}`;
+    queryText += ` AND type = ?`;
     values.push(filters.type);
   }
   if (filters.region) {
-    queryText += ` AND region = $${index++}`;
+    queryText += ` AND region = ?`;
     values.push(filters.region);
   }
 
   queryText += ` ORDER BY id DESC`;
-  const res = await client.query(queryText, values);
-  return res.rows;
+  const stmt = db.prepare(queryText);
+  return stmt.all(values);
 };
 
-const findById = async (id, client = db) => {
-  const queryText = `
+const findById = async (id) => {
+  const stmt = db.prepare(`
     SELECT * FROM vehicles
-    WHERE id = $1 AND status != 'Retired'
-  `;
-  const res = await client.query(queryText, [id]);
-  return res.rows[0];
+    WHERE id = ? AND status != 'Retired'
+  `);
+  return stmt.get(id);
 };
 
-const findByPlateNumber = async (plateNumber, client = db) => {
-  const queryText = `
+const findByPlateNumber = async (plateNumber) => {
+  const stmt = db.prepare(`
     SELECT * FROM vehicles
-    WHERE plate_number = $1 AND status != 'Retired'
-  `;
-  const res = await client.query(queryText, [plateNumber]);
-  return res.rows[0];
+    WHERE plate_number = ? AND status != 'Retired'
+  `);
+  return stmt.get(plateNumber);
 };
 
-const update = async (id, { plate_number, model, type, capacity, region, status }, client = db) => {
-  const queryText = `
+const update = async (id, { plate_number, model, type, capacity, region, status }) => {
+  const stmt = db.prepare(`
     UPDATE vehicles
-    SET plate_number = $1, model = $2, type = $3, capacity = $4, region = $5, status = $6, updated_at = CURRENT_TIMESTAMP
-    WHERE id = $7 AND status != 'Retired'
-    RETURNING *
-  `;
-  const values = [plate_number, model, type, capacity, region || null, status, id];
-  const res = await client.query(queryText, values);
-  return res.rows[0];
+    SET plate_number = ?, model = ?, type = ?, capacity = ?, region = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ? AND status != 'Retired'
+  `);
+  stmt.run(plate_number, model, type, capacity, region || null, status, id);
+  return findById(id);
 };
 
-const updateStatus = async (id, status, client = db) => {
-  const queryText = `
+const updateStatus = async (id, status, client) => {
+  // We ignore the client parameter since SQLite uses a single connection
+  const stmt = db.prepare(`
     UPDATE vehicles
-    SET status = $1, updated_at = CURRENT_TIMESTAMP
-    WHERE id = $2 AND status != 'Retired'
-    RETURNING *
-  `;
-  const res = await client.query(queryText, [status, id]);
-  return res.rows[0];
+    SET status = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ? AND status != 'Retired'
+  `);
+  stmt.run(status, id);
+  return findById(id);
 };
 
-const softDelete = async (id, client = db) => {
-  const queryText = `
+const softDelete = async (id) => {
+  const stmt = db.prepare(`
     UPDATE vehicles
     SET status = 'Retired', updated_at = CURRENT_TIMESTAMP
-    WHERE id = $1
-    RETURNING *
-  `;
-  const res = await client.query(queryText, [id]);
-  return res.rows[0];
+    WHERE id = ?
+  `);
+  stmt.run(id);
+  return findById(id);
 };
 
-const findAvailable = async (client = db) => {
-  const queryText = `
+const findAvailable = async () => {
+  const stmt = db.prepare(`
     SELECT * FROM vehicles
     WHERE status = 'Available'
     ORDER BY id DESC
-  `;
-  const res = await client.query(queryText);
-  return res.rows;
+  `);
+  return stmt.all();
 };
 
 module.exports = {

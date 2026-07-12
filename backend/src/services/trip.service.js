@@ -1,10 +1,9 @@
-const db = require('../config/db');
+const { db } = require('../config/db');
 const tripRepository = require('../repositories/trip.repository');
 const vehicleRepository = require('../repositories/vehicle.repository');
 const driverRepository = require('../repositories/driver.repository');
 
 const createTripDraft = async (tripData) => {
-  // Check vehicle & driver existence
   const vehicle = await vehicleRepository.findById(tripData.vehicle_id);
   if (!vehicle) {
     const error = new Error('Vehicle not found');
@@ -19,7 +18,6 @@ const createTripDraft = async (tripData) => {
     throw error;
   }
 
-  // Check cargo weight constraint
   if (parseFloat(tripData.cargo_weight) > parseFloat(vehicle.capacity)) {
     const error = new Error(`Cargo weight (${tripData.cargo_weight} kg) exceeds vehicle capacity (${vehicle.capacity} kg)`);
     error.statusCode = 400;
@@ -100,7 +98,6 @@ const dispatchTrip = async (id) => {
     throw error;
   }
 
-  // Check license expiry date
   const isExpired = new Date(driver.license_expiry) <= new Date();
   if (isExpired) {
     const error = new Error('Assigned driver license has expired');
@@ -108,32 +105,25 @@ const dispatchTrip = async (id) => {
     throw error;
   }
 
-  // Cargo capacity check
   if (parseFloat(trip.cargo_weight) > parseFloat(vehicle.capacity)) {
     const error = new Error(`Cargo weight exceeds vehicle capacity`);
     error.statusCode = 400;
     throw error;
   }
 
-  // TRANSACTION block
-  const client = await db.pool.connect();
+  // SQLite transaction block
   try {
-    await client.query('BEGIN');
+    db.prepare('BEGIN').run();
 
-    // 1. Dispatch Trip
-    const updatedTrip = await tripRepository.dispatch(id, client);
-    // 2. Set Vehicle to On Trip
-    await vehicleRepository.updateStatus(trip.vehicle_id, 'On Trip', client);
-    // 3. Set Driver to On Trip
-    await driverRepository.updateStatus(trip.driver_id, 'On Trip', client);
+    const updatedTrip = await tripRepository.dispatch(id);
+    await vehicleRepository.updateStatus(trip.vehicle_id, 'On Trip');
+    await driverRepository.updateStatus(trip.driver_id, 'On Trip');
 
-    await client.query('COMMIT');
+    db.prepare('COMMIT').run();
     return updatedTrip;
   } catch (error) {
-    await client.query('ROLLBACK');
+    db.prepare('ROLLBACK').run();
     throw error;
-  } finally {
-    client.release();
   }
 };
 
@@ -146,21 +136,18 @@ const completeTrip = async (id) => {
     throw error;
   }
 
-  const client = await db.pool.connect();
   try {
-    await client.query('BEGIN');
+    db.prepare('BEGIN').run();
 
-    const updatedTrip = await tripRepository.complete(id, client);
-    await vehicleRepository.updateStatus(trip.vehicle_id, 'Available', client);
-    await driverRepository.updateStatus(trip.driver_id, 'Available', client);
+    const updatedTrip = await tripRepository.complete(id);
+    await vehicleRepository.updateStatus(trip.vehicle_id, 'Available');
+    await driverRepository.updateStatus(trip.driver_id, 'Available');
 
-    await client.query('COMMIT');
+    db.prepare('COMMIT').run();
     return updatedTrip;
   } catch (error) {
-    await client.query('ROLLBACK');
+    db.prepare('ROLLBACK').run();
     throw error;
-  } finally {
-    client.release();
   }
 };
 
@@ -173,25 +160,21 @@ const cancelTrip = async (id) => {
     throw error;
   }
 
-  const client = await db.pool.connect();
   try {
-    await client.query('BEGIN');
+    db.prepare('BEGIN').run();
 
-    const updatedTrip = await tripRepository.cancel(id, client);
+    const updatedTrip = await tripRepository.cancel(id);
 
-    // Only restore status to available if the trip was actually active (Dispatched)
     if (trip.status === 'Dispatched') {
-      await vehicleRepository.updateStatus(trip.vehicle_id, 'Available', client);
-      await driverRepository.updateStatus(trip.driver_id, 'Available', client);
+      await vehicleRepository.updateStatus(trip.vehicle_id, 'Available');
+      await driverRepository.updateStatus(trip.driver_id, 'Available');
     }
 
-    await client.query('COMMIT');
+    db.prepare('COMMIT').run();
     return updatedTrip;
   } catch (error) {
-    await client.query('ROLLBACK');
+    db.prepare('ROLLBACK').run();
     throw error;
-  } finally {
-    client.release();
   }
 };
 
