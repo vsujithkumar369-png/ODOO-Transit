@@ -6,7 +6,7 @@ const roleMiddleware = require('../middlewares/role.middleware');
 const router = express.Router();
 
 router.use(authMiddleware);
-router.use(roleMiddleware('Admin', 'Manager'));
+router.use(roleMiddleware('FleetManager', 'FinancialAnalyst'));
 
 router.get('/fuel-efficiency', reportController.getFuelEfficiencyReport);
 router.get('/operational-costs', reportController.getOperationalCostReport);

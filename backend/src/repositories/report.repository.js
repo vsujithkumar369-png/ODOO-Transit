@@ -4,16 +4,34 @@ const getDashboardKPIs = async (client = db) => {
   const queryText = `
     SELECT
       (SELECT COUNT(*) FROM vehicles WHERE status != 'Retired') as total_vehicles,
+      (SELECT COUNT(*) FROM vehicles WHERE status = 'Available') as available_vehicles,
+      (SELECT COUNT(*) FROM vehicles WHERE status = 'In Shop') as vehicles_in_shop,
       (SELECT COUNT(*) FROM trips WHERE status = 'Dispatched') as active_trips,
-      (SELECT COUNT(*) FROM maintenance WHERE status = 'Open') as pending_maintenance,
-      COALESCE((SELECT SUM(amount) FROM expenses WHERE expense_date >= DATE_TRUNC('month', CURRENT_DATE)), 0) as monthly_expenses
+      (SELECT COUNT(*) FROM trips WHERE status = 'Draft') as pending_trips,
+      (SELECT COUNT(*) FROM drivers WHERE status = 'On Trip') as drivers_on_duty,
+      COALESCE(
+        ROUND(
+          ((SELECT COUNT(*) FROM vehicles WHERE status = 'On Trip') * 100.0) / 
+          NULLIF((SELECT COUNT(*) FROM vehicles WHERE status != 'Retired'), 0), 
+          2
+        ), 
+        0.00
+      ) as fleet_utilization,
+      (SELECT COALESCE(SUM(cost), 0.00) FROM fuel_logs) as total_fuel_cost,
+      (SELECT COALESCE(SUM(cost), 0.00) FROM maintenance) as total_maintenance_cost
   `;
   const res = await client.query(queryText);
+  const row = res.rows[0];
   return {
-    totalVehicles: parseInt(res.rows[0].total_vehicles, 10),
-    activeTrips: parseInt(res.rows[0].active_trips, 10),
-    pendingMaintenance: parseInt(res.rows[0].pending_maintenance, 10),
-    monthlyExpenses: parseFloat(res.rows[0].monthly_expenses)
+    totalVehicles: parseInt(row.total_vehicles, 10),
+    availableVehicles: parseInt(row.available_vehicles, 10),
+    vehiclesInShop: parseInt(row.vehicles_in_shop, 10),
+    activeTrips: parseInt(row.active_trips, 10),
+    pendingTrips: parseInt(row.pending_trips, 10),
+    driversOnDuty: parseInt(row.drivers_on_duty, 10),
+    fleetUtilization: parseFloat(row.fleet_utilization),
+    totalFuelCost: parseFloat(row.total_fuel_cost),
+    totalMaintenanceCost: parseFloat(row.total_maintenance_cost)
   };
 };
 

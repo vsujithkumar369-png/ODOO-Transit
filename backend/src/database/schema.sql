@@ -18,10 +18,12 @@ CREATE TABLE IF NOT EXISTS vehicles (
     model VARCHAR(100) NOT NULL,
     type VARCHAR(50) NOT NULL,
     capacity NUMERIC(10, 2) NOT NULL, -- Cargo capacity in kg
+    region VARCHAR(100),
     status VARCHAR(50) DEFAULT 'Available' CHECK (status IN ('Available', 'On Trip', 'In Shop', 'Retired')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- Drivers Table
 CREATE TABLE IF NOT EXISTS drivers (

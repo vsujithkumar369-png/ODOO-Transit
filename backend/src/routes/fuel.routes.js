@@ -9,11 +9,11 @@ const router = express.Router();
 
 router.use(authMiddleware);
 
-router.get('/', fuelController.getAllFuelLogs);
-router.get('/:id', fuelController.getFuelLogById);
+router.get('/', roleMiddleware('FleetManager', 'Driver', 'FinancialAnalyst'), fuelController.getAllFuelLogs);
+router.get('/:id', roleMiddleware('FleetManager', 'Driver', 'FinancialAnalyst'), fuelController.getFuelLogById);
 
-router.post('/', roleMiddleware('Admin', 'Manager', 'Operator', 'Driver'), fuelRules, validationMiddleware, fuelController.createFuelLog);
-router.put('/:id', roleMiddleware('Admin', 'Manager', 'Operator'), fuelRules, validationMiddleware, fuelController.updateFuelLog);
-router.delete('/:id', roleMiddleware('Admin'), fuelController.deleteFuelLog);
+router.post('/', roleMiddleware('FleetManager', 'Driver'), fuelRules, validationMiddleware, fuelController.createFuelLog);
+router.put('/:id', roleMiddleware('FleetManager'), fuelRules, validationMiddleware, fuelController.updateFuelLog);
+router.delete('/:id', roleMiddleware('FleetManager'), fuelController.deleteFuelLog);
 
 module.exports = router;

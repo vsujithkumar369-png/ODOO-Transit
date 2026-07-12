@@ -12,13 +12,13 @@ router.use(authMiddleware);
 router.get('/', tripController.getAllTrips);
 router.get('/:id', tripController.getTripById);
 
-router.post('/', roleMiddleware('Admin', 'Manager', 'Operator'), tripRules, validationMiddleware, tripController.createTrip);
-router.put('/:id', roleMiddleware('Admin', 'Manager', 'Operator'), tripRules, validationMiddleware, tripController.updateTrip);
-router.delete('/:id', roleMiddleware('Admin'), tripController.deleteTrip);
+router.post('/', roleMiddleware('FleetManager', 'SafetyOfficer'), tripRules, validationMiddleware, tripController.createTrip);
+router.put('/:id', roleMiddleware('FleetManager', 'SafetyOfficer'), tripRules, validationMiddleware, tripController.updateTrip);
+router.delete('/:id', roleMiddleware('FleetManager'), tripController.deleteTrip);
 
-// Trip lifecycle routes
-router.put('/:id/dispatch', roleMiddleware('Admin', 'Manager', 'Operator'), tripController.dispatchTrip);
-router.put('/:id/complete', roleMiddleware('Admin', 'Manager', 'Operator'), tripController.completeTrip);
-router.put('/:id/cancel', roleMiddleware('Admin', 'Manager', 'Operator'), tripController.cancelTrip);
+// Trip lifecycle routes - updated to POST as requested
+router.post('/:id/dispatch', roleMiddleware('FleetManager', 'SafetyOfficer'), tripController.dispatchTrip);
+router.post('/:id/complete', roleMiddleware('FleetManager', 'SafetyOfficer'), tripController.completeTrip);
+router.post('/:id/cancel', roleMiddleware('FleetManager', 'SafetyOfficer'), tripController.cancelTrip);
 
 module.exports = router;

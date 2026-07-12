@@ -1,23 +1,36 @@
 const db = require('../config/db');
 
-const create = async ({ plate_number, model, type, capacity, status }, client = db) => {
+const create = async ({ plate_number, model, type, capacity, region, status }, client = db) => {
   const queryText = `
-    INSERT INTO vehicles (plate_number, model, type, capacity, status)
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO vehicles (plate_number, model, type, capacity, region, status)
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *
   `;
-  const values = [plate_number, model, type, capacity, status || 'Available'];
+  const values = [plate_number, model, type, capacity, region || null, status || 'Available'];
   const res = await client.query(queryText, values);
   return res.rows[0];
 };
 
-const findAll = async (client = db) => {
-  const queryText = `
-    SELECT * FROM vehicles
-    WHERE status != 'Retired'
-    ORDER BY id DESC
-  `;
-  const res = await client.query(queryText);
+const findAll = async (filters = {}, client = db) => {
+  let queryText = `SELECT * FROM vehicles WHERE status != 'Retired'`;
+  const values = [];
+  let index = 1;
+
+  if (filters.status) {
+    queryText += ` AND status = $${index++}`;
+    values.push(filters.status);
+  }
+  if (filters.type) {
+    queryText += ` AND type = $${index++}`;
+    values.push(filters.type);
+  }
+  if (filters.region) {
+    queryText += ` AND region = $${index++}`;
+    values.push(filters.region);
+  }
+
+  queryText += ` ORDER BY id DESC`;
+  const res = await client.query(queryText, values);
   return res.rows;
 };
 
@@ -39,14 +52,14 @@ const findByPlateNumber = async (plateNumber, client = db) => {
   return res.rows[0];
 };
 
-const update = async (id, { plate_number, model, type, capacity, status }, client = db) => {
+const update = async (id, { plate_number, model, type, capacity, region, status }, client = db) => {
   const queryText = `
     UPDATE vehicles
-    SET plate_number = $1, model = $2, type = $3, capacity = $4, status = $5, updated_at = CURRENT_TIMESTAMP
-    WHERE id = $6 AND status != 'Retired'
+    SET plate_number = $1, model = $2, type = $3, capacity = $4, region = $5, status = $6, updated_at = CURRENT_TIMESTAMP
+    WHERE id = $7 AND status != 'Retired'
     RETURNING *
   `;
-  const values = [plate_number, model, type, capacity, status, id];
+  const values = [plate_number, model, type, capacity, region || null, status, id];
   const res = await client.query(queryText, values);
   return res.rows[0];
 };

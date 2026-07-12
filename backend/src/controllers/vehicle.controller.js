@@ -3,7 +3,8 @@ const response = require('../utils/response');
 
 const getAllVehicles = async (req, res, next) => {
   try {
-    const vehicles = await vehicleService.getVehicles();
+    const { status, type, region } = req.query;
+    const vehicles = await vehicleService.getVehicles({ status, type, region });
     return response.success(res, 'Vehicles listed successfully', vehicles);
   } catch (error) {
     next(error);

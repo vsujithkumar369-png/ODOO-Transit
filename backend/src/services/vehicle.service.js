@@ -10,8 +10,8 @@ const createVehicle = async (vehicleData) => {
   return vehicleRepository.create(vehicleData);
 };
 
-const getVehicles = async () => {
-  return vehicleRepository.findAll();
+const getVehicles = async (filters = {}) => {
+  return vehicleRepository.findAll(filters);
 };
 
 const getVehicleById = async (id) => {
@@ -25,7 +25,7 @@ const getVehicleById = async (id) => {
 };
 
 const updateVehicle = async (id, vehicleData) => {
-  await getVehicleById(id); // Throws if not exists
+  await getVehicleById(id); // Throws if not exists or retired
 
   const existing = await vehicleRepository.findByPlateNumber(vehicleData.plate_number);
   if (existing && existing.id !== parseInt(id, 10)) {
@@ -38,7 +38,7 @@ const updateVehicle = async (id, vehicleData) => {
 };
 
 const deleteVehicle = async (id) => {
-  const vehicle = await getVehicleById(id);
+  await getVehicleById(id);
   return vehicleRepository.softDelete(id);
 };
 

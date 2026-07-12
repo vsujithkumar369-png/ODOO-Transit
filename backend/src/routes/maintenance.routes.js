@@ -9,11 +9,11 @@ const router = express.Router();
 
 router.use(authMiddleware);
 
-router.get('/', maintenanceController.getAllMaintenanceLogs);
-router.get('/:id', maintenanceController.getMaintenanceLogById);
+router.get('/', roleMiddleware('FleetManager', 'SafetyOfficer', 'FinancialAnalyst'), maintenanceController.getAllMaintenanceLogs);
+router.get('/:id', roleMiddleware('FleetManager', 'SafetyOfficer', 'FinancialAnalyst'), maintenanceController.getMaintenanceLogById);
 
-router.post('/', roleMiddleware('Admin', 'Manager'), maintenanceRules, validationMiddleware, maintenanceController.createMaintenanceLog);
-router.put('/:id/close', roleMiddleware('Admin', 'Manager'), maintenanceController.updateMaintenanceLog);
-router.delete('/:id', roleMiddleware('Admin'), maintenanceController.deleteMaintenanceLog);
+router.post('/', roleMiddleware('FleetManager', 'SafetyOfficer'), maintenanceRules, validationMiddleware, maintenanceController.createMaintenanceLog);
+router.put('/:id/close', roleMiddleware('FleetManager', 'SafetyOfficer'), maintenanceController.updateMaintenanceLog);
+router.delete('/:id', roleMiddleware('FleetManager'), maintenanceController.deleteMaintenanceLog);
 
 module.exports = router;

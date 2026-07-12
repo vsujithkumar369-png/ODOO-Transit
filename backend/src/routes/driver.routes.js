@@ -9,12 +9,12 @@ const router = express.Router();
 
 router.use(authMiddleware);
 
-router.get('/', driverController.getAllDrivers);
-router.get('/available', driverController.getAvailableDrivers);
-router.get('/:id', driverController.getDriverById);
+router.get('/', roleMiddleware('FleetManager', 'SafetyOfficer'), driverController.getAllDrivers);
+router.get('/available', roleMiddleware('FleetManager', 'SafetyOfficer'), driverController.getAvailableDrivers);
+router.get('/:id', roleMiddleware('FleetManager', 'SafetyOfficer'), driverController.getDriverById);
 
-router.post('/', roleMiddleware('Admin', 'Manager'), driverRules, validationMiddleware, driverController.createDriver);
-router.put('/:id', roleMiddleware('Admin', 'Manager'), driverRules, validationMiddleware, driverController.updateDriver);
-router.delete('/:id', roleMiddleware('Admin'), driverController.deleteDriver);
+router.post('/', roleMiddleware('FleetManager', 'SafetyOfficer'), driverRules, validationMiddleware, driverController.createDriver);
+router.put('/:id', roleMiddleware('FleetManager', 'SafetyOfficer'), driverRules, validationMiddleware, driverController.updateDriver);
+router.delete('/:id', roleMiddleware('FleetManager'), driverController.deleteDriver);
 
 module.exports = router;
