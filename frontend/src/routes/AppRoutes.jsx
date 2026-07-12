@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 
@@ -28,6 +28,15 @@ import TripHistory from '../pages/driver/TripHistory';
 import Profile from '../pages/driver/Profile';
 import DriverSettings from '../pages/driver/Settings';
 
+// Safety Officer (lazy loaded for code splitting)
+const SODashboard      = lazy(() => import('../pages/safetyOfficer/Dashboard'));
+const DriverCompliance = lazy(() => import('../pages/safetyOfficer/DriverCompliance'));
+const LicenseMonitoring = lazy(() => import('../pages/safetyOfficer/LicenseMonitoring'));
+const VehicleSafety    = lazy(() => import('../pages/safetyOfficer/VehicleSafety'));
+const IncidentReports  = lazy(() => import('../pages/safetyOfficer/IncidentReports'));
+const SafetyReports    = lazy(() => import('../pages/safetyOfficer/SafetyReports'));
+const SOSettings       = lazy(() => import('../pages/safetyOfficer/Settings'));
+
 // Helper to handle role string normalization (e.g. "Fleet Manager" vs "FleetManager")
 const normalizeRole = (role) => {
   if (!role) return '';
@@ -39,7 +48,8 @@ const RoleRedirect = () => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
   const normalized = normalizeRole(user.role);
-  if (normalized === 'driver') return <Navigate to="/driver/dashboard" replace />;
+  if (normalized === 'driver')        return <Navigate to="/driver/dashboard" replace />;
+  if (normalized === 'safetyofficer') return <Navigate to="/safety/dashboard" replace />;
   return <Navigate to="/dashboard" replace />;
 };
 
@@ -58,39 +68,50 @@ const PrivateRoute = ({ children, allowedRoles }) => {
 
 const AppRoutes = () => {
   return (
-    <Routes>
-      {/* Public */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
+    <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--text-secondary)' }}>Loading...</div>}>
+      <Routes>
+        {/* Public */}
+        <Route path="/login"            element={<Login />} />
+        <Route path="/register"         element={<Register />} />
+        <Route path="/forgot-password"  element={<ForgotPassword />} />
 
-      {/* Root redirect */}
-      <Route path="/" element={<RoleRedirect />} />
+        {/* Root redirect */}
+        <Route path="/" element={<RoleRedirect />} />
 
-      {/* Fleet Manager / Safety Officer / Financial Analyst */}
-      <Route path="/dashboard" element={<PrivateRoute allowedRoles={['Fleet Manager', 'Safety Officer', 'Financial Analyst']}><FMDashboard /></PrivateRoute>} />
-      <Route path="/vehicles" element={<PrivateRoute><Vehicles /></PrivateRoute>} />
-      <Route path="/drivers" element={<PrivateRoute><Drivers /></PrivateRoute>} />
-      <Route path="/dispatch" element={<PrivateRoute><DispatchTrips /></PrivateRoute>} />
-      <Route path="/history" element={<PrivateRoute><DispatchHistory /></PrivateRoute>} />
-      <Route path="/maintenance" element={<PrivateRoute><Maintenance /></PrivateRoute>} />
-      <Route path="/fuel" element={<PrivateRoute><FMFuelLogs /></PrivateRoute>} />
-      <Route path="/expenses" element={<PrivateRoute><Expenses /></PrivateRoute>} />
-      <Route path="/reports" element={<PrivateRoute><Reports /></PrivateRoute>} />
-      <Route path="/settings" element={<PrivateRoute><FMSettings /></PrivateRoute>} />
+        {/* Fleet Manager */}
+        <Route path="/dashboard"   element={<PrivateRoute allowedRoles={['Fleet Manager', 'Financial Analyst']}><FMDashboard /></PrivateRoute>} />
+        <Route path="/vehicles"    element={<PrivateRoute><Vehicles /></PrivateRoute>} />
+        <Route path="/drivers"     element={<PrivateRoute><Drivers /></PrivateRoute>} />
+        <Route path="/dispatch"    element={<PrivateRoute><DispatchTrips /></PrivateRoute>} />
+        <Route path="/history"     element={<PrivateRoute><DispatchHistory /></PrivateRoute>} />
+        <Route path="/maintenance" element={<PrivateRoute><Maintenance /></PrivateRoute>} />
+        <Route path="/fuel"        element={<PrivateRoute><FMFuelLogs /></PrivateRoute>} />
+        <Route path="/expenses"    element={<PrivateRoute><Expenses /></PrivateRoute>} />
+        <Route path="/reports"     element={<PrivateRoute><Reports /></PrivateRoute>} />
+        <Route path="/settings"    element={<PrivateRoute><FMSettings /></PrivateRoute>} />
 
-      {/* Driver */}
-      <Route path="/driver/dashboard" element={<PrivateRoute allowedRoles={['Driver']}><DriverDashboard /></PrivateRoute>} />
-      <Route path="/driver/my-trips" element={<PrivateRoute allowedRoles={['Driver']}><MyTrips /></PrivateRoute>} />
-      <Route path="/driver/current-trip" element={<PrivateRoute allowedRoles={['Driver']}><CurrentTrip /></PrivateRoute>} />
-      <Route path="/driver/fuel-logs" element={<PrivateRoute allowedRoles={['Driver']}><FuelLogs /></PrivateRoute>} />
-      <Route path="/driver/trip-history" element={<PrivateRoute allowedRoles={['Driver']}><TripHistory /></PrivateRoute>} />
-      <Route path="/driver/profile" element={<PrivateRoute allowedRoles={['Driver']}><Profile /></PrivateRoute>} />
-      <Route path="/driver/settings" element={<PrivateRoute allowedRoles={['Driver']}><DriverSettings /></PrivateRoute>} />
+        {/* Driver */}
+        <Route path="/driver/dashboard"    element={<PrivateRoute allowedRoles={['Driver']}><DriverDashboard /></PrivateRoute>} />
+        <Route path="/driver/my-trips"     element={<PrivateRoute allowedRoles={['Driver']}><MyTrips /></PrivateRoute>} />
+        <Route path="/driver/current-trip" element={<PrivateRoute allowedRoles={['Driver']}><CurrentTrip /></PrivateRoute>} />
+        <Route path="/driver/fuel-logs"    element={<PrivateRoute allowedRoles={['Driver']}><FuelLogs /></PrivateRoute>} />
+        <Route path="/driver/trip-history" element={<PrivateRoute allowedRoles={['Driver']}><TripHistory /></PrivateRoute>} />
+        <Route path="/driver/profile"      element={<PrivateRoute allowedRoles={['Driver']}><Profile /></PrivateRoute>} />
+        <Route path="/driver/settings"     element={<PrivateRoute allowedRoles={['Driver']}><DriverSettings /></PrivateRoute>} />
 
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
+        {/* Safety Officer */}
+        <Route path="/safety/dashboard" element={<PrivateRoute allowedRoles={['Safety Officer']}><SODashboard /></PrivateRoute>} />
+        <Route path="/compliance"       element={<PrivateRoute allowedRoles={['Safety Officer']}><DriverCompliance /></PrivateRoute>} />
+        <Route path="/licenses"         element={<PrivateRoute allowedRoles={['Safety Officer']}><LicenseMonitoring /></PrivateRoute>} />
+        <Route path="/vehicle-safety"   element={<PrivateRoute allowedRoles={['Safety Officer']}><VehicleSafety /></PrivateRoute>} />
+        <Route path="/incidents"        element={<PrivateRoute allowedRoles={['Safety Officer']}><IncidentReports /></PrivateRoute>} />
+        <Route path="/safety-reports"   element={<PrivateRoute allowedRoles={['Safety Officer']}><SafetyReports /></PrivateRoute>} />
+        <Route path="/safety/settings"  element={<PrivateRoute allowedRoles={['Safety Officer']}><SOSettings /></PrivateRoute>} />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </Suspense>
   );
 };
 

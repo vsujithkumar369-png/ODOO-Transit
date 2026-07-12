@@ -59,3 +59,6 @@ export const authService = {
     return request('PUT', '/auth/profile', profileData, fallback);
   }
 };
+
+export default authService;
+

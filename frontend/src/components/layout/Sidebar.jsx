@@ -29,13 +29,13 @@ const MENUS = {
     { name: 'Settings', path: '/settings', icon: <Settings size={20} /> },
   ],
   'Safety Officer': [
-    { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
+    { name: 'Dashboard', path: '/safety/dashboard', icon: <LayoutDashboard size={20} /> },
     { name: 'Driver Compliance', path: '/compliance', icon: <Users size={20} /> },
     { name: 'License Monitoring', path: '/licenses', icon: <Shield size={20} /> },
     { name: 'Vehicle Safety', path: '/vehicle-safety', icon: <Truck size={20} /> },
     { name: 'Incident Reports', path: '/incidents', icon: <FileText size={20} /> },
     { name: 'Safety Reports', path: '/safety-reports', icon: <FileText size={20} /> },
-    { name: 'Settings', path: '/settings', icon: <Settings size={20} /> },
+    { name: 'Settings', path: '/safety/settings', icon: <Settings size={20} /> },
   ],
   'Financial Analyst': [
     { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
