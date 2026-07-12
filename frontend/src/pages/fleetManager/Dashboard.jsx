@@ -21,7 +21,7 @@ const Dashboard = () => {
         <p style={{ color: 'var(--text-secondary)' }}>Welcome back, admin. Here is what's happening with your fleet today.</p>
       </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+      <div className="responsive-grid-cards">
         <Card title="Total Vehicles" icon={<Truck size={20} />}>
           <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>42</div>
           <div style={{ color: 'var(--success)', fontSize: '0.875rem' }}>+2 this month</div>
@@ -40,7 +40,7 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
+      <div className="responsive-grid-2">
         <Card title="Trips Overview (7 Days)">
           <BarChart />
         </Card>

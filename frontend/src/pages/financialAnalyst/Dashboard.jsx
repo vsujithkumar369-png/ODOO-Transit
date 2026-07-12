@@ -22,7 +22,7 @@ const Dashboard = () => {
         <p style={{ color: 'var(--text-secondary)' }}>Track revenue, operational costs, and fleet profitability.</p>
       </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+      <div className="responsive-grid-cards">
         <Card title="Total Revenue (YTD)" icon={<TrendingUp size={20} />}>
           <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>$842,500</div>
           <div style={{ color: 'var(--success)', fontSize: '0.875rem' }}>+12% vs last year</div>
@@ -41,7 +41,7 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
+      <div className="responsive-grid-2">
         <Card title="Revenue vs Expenses (Last 6 Months)">
           <BarChart />
         </Card>
