@@ -127,3 +127,7 @@ const Register = () => {
         </form>
       </Card>
     </div>
+  );
+};
+
+export default Register;
