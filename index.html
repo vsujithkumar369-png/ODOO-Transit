@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TransitOps - Smart Transport Operations Platform</title>
+  
+  <!-- CSS Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- Google Fonts Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js for beautiful analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- ==================== AUTHENTICATION SCREEN ==================== -->
+  <div id="auth-screen">
+    <div class="glass-panel auth-card">
+      <div class="auth-logo">
+        <!-- SVG Truck Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 18H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h11v11"/>
+          <path d="M14 14h7v4H14z"/>
+          <circle cx="7.5" cy="18.5" r="2.5"/>
+          <circle cx="17.5" cy="18.5" r="2.5"/>
+        </svg>
+        <span>TransitOps</span>
+      </div>
+      
+      <div class="auth-header">
+        <h2>Sign In to Platform</h2>
+        <p>Smart Operations & Fleet Management Engine</p>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">Email Address</label>
+          <div class="input-wrapper">
+            <!-- User Icon SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <input type="email" id="login-email" class="form-input" placeholder="e.g. manager@transitops.com" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <div class="input-wrapper">
+            <!-- Lock Icon SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top: 10px;">
+          Authenticate
+        </button>
+      </form>
+
+      <!-- Hackathon Demo Credentials Switcher -->
+      <div class="auth-demo-credentials">
+        <p>HACKATHON QUICK-FILL ROLES:</p>
+        <div class="credential-chips">
+          <span class="chip" onclick="window.app.setDemoCredentials('manager@transitops.com', 'admin')">Fleet Manager</span>
+          <span class="chip" onclick="window.app.setDemoCredentials('driver@transitops.com', 'driver')">Driver/Dispatcher</span>
+          <span class="chip" onclick="window.app.setDemoCredentials('safety@transitops.com', 'safety')">Safety Officer</span>
+          <span class="chip" onclick="window.app.setDemoCredentials('analyst@transitops.com', 'analyst')">Financial Analyst</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN APPLICATION SHELL ==================== -->
+  <div id="app-screen">
+    <div class="app-container">
+      
+      <!-- Side Navigation Bar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="auth-logo" style="margin-bottom: 0; gap: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 28px; height: 28px;">
+              <path d="M14 18H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h11v11"/>
+              <path d="M14 14h7v4H14z"/>
+              <circle cx="7.5" cy="18.5" r="2.5"/>
+              <circle cx="17.5" cy="18.5" r="2.5"/>
+            </svg>
+            <span style="font-size: 20px;">TransitOps</span>
+          </div>
+        </div>
+
+        <!-- Rendered dynamically in app.js based on role permissions -->
+        <ul class="sidebar-menu" id="sidebar-menu"></ul>
+
+        <!-- Sidebar User Card & Logout -->
+        <div class="sidebar-footer">
+          <div class="user-profile">
+            <div class="avatar" id="avatar-display">FM</div>
+            <div class="user-info">
+              <span class="user-name" id="user-name-display">Sarah Connor</span>
+              <span class="user-role" id="user-role-display">fleet_manager</span>
+            </div>
+          </div>
+          <button class="btn-logout" id="logout-btn" title="Sign Out">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Layout Section -->
+      <main class="main-wrapper">
+        <header class="main-header">
+          <div class="header-title">
+            <h1 id="view-title">Dashboard</h1>
+          </div>
+
+          <div class="header-actions">
+            
+            <!-- RBAC Live Switcher (Judges presentation layout booster) -->
+            <div class="role-badge-selector">
+              <span class="role-badge-label">VIEW AS:</span>
+              <select id="navbar-role-selector" class="role-dropdown">
+                <option value="fleet_manager">Fleet Manager</option>
+                <option value="driver">Driver / Dispatcher</option>
+                <option value="safety_officer">Safety Officer</option>
+                <option value="financial_analyst">Financial Analyst</option>
+              </select>
+            </div>
+
+            <!-- Theme Toggle -->
+            <button class="icon-btn" id="theme-toggle-btn" title="Toggle Light/Dark Mode">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v2"/><path d="M12 20v2"/>
+                <path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/>
+                <path d="M2 12h2"/><path d="M20 12h2"/>
+                <path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+              </svg>
+            </button>
+
+            <!-- Notifications Center -->
+            <button class="icon-btn" title="View Alerts" onclick="window.app.navigateTo('alerts')">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+              </svg>
+              <div class="notification-dot"></div>
+            </button>
+          </div>
+        </header>
+
+        <!-- Component Content Target -->
+        <div class="content-area" id="content-area"></div>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- ==================== MODALS LAYOUT CONTAINERS ==================== -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Form</h3>
+        <span class="modal-close" id="modal-close-btn">&times;</span>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="window.app.hideModal()">Cancel</button>
+        <button class="btn btn-primary" id="modal-save-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Core Javascript Architecture Layers -->
+  <script src="js/store.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
