@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import Card from '../../components/common/Card';
 import Table from '../../components/common/Table';
@@ -6,14 +6,43 @@ import StatusBadge from '../../components/common/StatusBadge';
 import { DollarSign, TrendingUp, AlertTriangle, Briefcase } from 'lucide-react';
 import BarChart from '../../components/charts/BarChart';
 import PieChart from '../../components/charts/PieChart';
+import { dashboardService } from '../../services/dashboardService';
+import { expenseService } from '../../services/expenseService';
 
 const Dashboard = () => {
-  const recentExpenses = [
-    { id: 'EXP-9021', date: '2026-07-10', category: 'Fuel', amount: '$4,250.00', status: 'Cleared' },
-    { id: 'EXP-9022', date: '2026-07-11', category: 'Maintenance', amount: '$1,820.50', status: 'Pending' },
-    { id: 'EXP-9023', date: '2026-07-11', category: 'Salary', amount: '$12,400.00', status: 'Cleared' },
-    { id: 'EXP-9024', date: '2026-07-12', category: 'Tolls & Fees', amount: '$340.00', status: 'Processing' },
-  ];
+  const [kpis, setKpis] = useState(null);
+  const [expenses, setExpenses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const kpiRes = await dashboardService.getKPIs();
+        const expRes = await expenseService.list();
+        setKpis(kpiRes);
+        setExpenses(expRes);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+          <h3>Loading financial data...</h3>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Calculate mock YTD Revenue based on base + active trips
+  const totalRevenue = 842500;
+  const totalCosts = (kpis?.totalFuelCost || 0) + (kpis?.totalMaintenanceCost || 0) + 120000;
 
   return (
     <DashboardLayout>
@@ -24,15 +53,17 @@ const Dashboard = () => {
       
       <div className="responsive-grid-cards">
         <Card title="Total Revenue (YTD)" icon={<TrendingUp size={20} />}>
-          <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>$842,500</div>
+          <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>${totalRevenue.toLocaleString()}</div>
           <div style={{ color: 'var(--success)', fontSize: '0.875rem' }}>+12% vs last year</div>
         </Card>
         <Card title="Operational Costs" icon={<Briefcase size={20} />}>
-          <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>$315,200</div>
+          <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>${totalCosts.toLocaleString()}</div>
           <div style={{ color: 'var(--danger)', fontSize: '0.875rem' }}>+4% vs last month</div>
         </Card>
-        <Card title="Net Profit Margin" icon={<DollarSign size={20} />}>
-          <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>28.4%</div>
+        <Card title="Profit Margin" icon={<DollarSign size={20} />}>
+          <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
+            {((totalRevenue - totalCosts) / totalRevenue * 100).toFixed(1)}%
+          </div>
           <div style={{ color: 'var(--success)', fontSize: '0.875rem' }}>Healthy</div>
         </Card>
         <Card title="Budget Alerts" icon={<AlertTriangle size={20} />}>
@@ -53,7 +84,7 @@ const Dashboard = () => {
       <Card title="Recent Large Expenses">
         <Table 
           headers={['Transaction ID', 'Date', 'Category', 'Amount', 'Status']}
-          data={recentExpenses}
+          data={expenses}
           renderRow={(row, i) => (
             <tr key={i}>
               <td style={{fontWeight: 'bold'}}>{row.id}</td>

@@ -1,18 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import Card from '../../components/common/Card';
 import Table from '../../components/common/Table';
 import StatusBadge from '../../components/common/StatusBadge';
 import Button from '../../components/common/Button';
+import { expenseService } from '../../services/expenseService';
 
 const ExpenseManagement = () => {
-  const expenses = [
-    { id: 'EXP-9021', date: '2026-07-10', vehicle: 'All', category: 'Fuel', amount: '$4,250.00', status: 'Cleared' },
-    { id: 'EXP-9022', date: '2026-07-11', vehicle: 'V-003', category: 'Maintenance', amount: '$1,820.50', status: 'Pending' },
-    { id: 'EXP-9023', date: '2026-07-11', vehicle: 'All', category: 'Salary', amount: '$12,400.00', status: 'Cleared' },
-    { id: 'EXP-9024', date: '2026-07-12', vehicle: 'V-001', category: 'Tolls & Fees', amount: '$340.00', status: 'Processing' },
-    { id: 'EXP-9025', date: '2026-07-12', vehicle: 'All', category: 'Insurance', amount: '$5,100.00', status: 'Cleared' },
-  ];
+  const [expenses, setExpenses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchExpenses() {
+      try {
+        const res = await expenseService.list();
+        setExpenses(res);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchExpenses();
+  }, []);
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+          <h3>Loading expenses logs...</h3>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>

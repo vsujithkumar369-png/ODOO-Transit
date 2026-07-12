@@ -1,17 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import Card from '../../components/common/Card';
 import Table from '../../components/common/Table';
 import StatusBadge from '../../components/common/StatusBadge';
 import Button from '../../components/common/Button';
+import { driverService } from '../../services/driverService';
 
 const Drivers = () => {
-  const drivers = [
-    { id: 'D-101', name: 'John Doe', phone: '+1 234 567 890', license: 'CDL-A', expiry: '2027-10-15', status: 'Active' },
-    { id: 'D-102', name: 'Alice Smith', phone: '+1 987 654 321', license: 'CDL-B', expiry: '2026-05-22', status: 'On Trip' },
-    { id: 'D-103', name: 'Robert Fox', phone: '+1 555 444 333', license: 'CDL-A', expiry: '2024-01-10', status: 'Expiring Soon' },
-    { id: 'D-104', name: 'Michael Scott', phone: '+1 111 222 333', license: 'Standard', expiry: '2028-12-01', status: 'Inactive' },
-  ];
+  const [drivers, setDrivers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchDrivers() {
+      try {
+        const res = await driverService.list();
+        setDrivers(res);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchDrivers();
+  }, []);
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+          <h3>Loading drivers directory...</h3>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
