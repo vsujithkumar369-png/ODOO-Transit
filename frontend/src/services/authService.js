@@ -46,5 +46,19 @@ export const authService = {
 
   logout() {
     removeAuthToken();
+  },
+
+  async updateProfile(profileData) {
+    const fallback = {
+      id: 1,
+      name: profileData.name || "Fleet Manager",
+      email: profileData.email || "manager@transitops.com",
+      phone: profileData.phone || "9876543210",
+      role: "FleetManager"
+    };
+    return request('PUT', '/auth/profile', profileData, fallback);
   }
 };
+
+export default authService;
+

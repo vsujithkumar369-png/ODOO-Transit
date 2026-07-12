@@ -7,7 +7,7 @@ const VehicleSafety = () => {
     <DashboardLayout>
       <div className="page-header" style={{marginBottom: '2rem'}}>
         <h2>safetyOfficer / VehicleSafety</h2>
-        <p style={{color: 'var(--text-secondary)'}}>Home > safetyOfficer > VehicleSafety</p>
+        <p style={{color: 'var(--text-secondary)'}}>Home &gt; safetyOfficer &gt; VehicleSafety</p>
       </div>
       <div className="page-content">
         <Card title="VehicleSafety Overview">

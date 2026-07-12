@@ -29,7 +29,7 @@ const Login = () => {
     }
     setLoading(true);
     try {
-      const user = login(email.trim(), password);
+      const user = await login(email.trim(), password);
       // Redirect by role
       if (user.role === 'Driver') {
         navigate('/driver/dashboard', { replace: true });
@@ -37,7 +37,7 @@ const Login = () => {
         navigate('/dashboard', { replace: true });
       }
     } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.');
+      setError(err.response?.data?.message || err.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
@@ -157,7 +157,7 @@ const Login = () => {
               disabled={loading}
               style={{ width: '100%', padding: '0.75rem', fontSize: '0.9375rem', justifyContent: 'center' }}
             >
-              {loading ? 'Signing In…' : 'Sign In'}
+              {loading ? 'Signing In...' : 'Sign In'}
             </Button>
           </form>
         </Card>
